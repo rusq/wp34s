@@ -38,7 +38,7 @@
 #include <windows.h>
 #undef shutdown
 #endif
-#ifdef QTGUI
+#if defined(QTGUI) || ( defined(USECURSES) && !defined(WIN32) )
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -48,9 +48,9 @@
 #define SLCDCMEM
 #define VOLATILE_RAM
 #define BACKUP_FLASH
-#define STATE_FILE "wp34c.dat"
-#define BACKUP_FILE "wp34c-backup.dat"
-#define LIBRARY_FILE "wp34c-lib.dat"
+#define STATE_FILE "wp34s.dat"
+#define BACKUP_FILE "wp34s-backup.dat"
+#define LIBRARY_FILE "wp34s-lib.dat"
 #endif
 
 #include "xeq.h"
@@ -814,6 +814,7 @@ void recall_program( enum nilop op )
 #else
 #define ASSEMBLER "../tools/wp34s_asm.pl"
 #endif
+#define ASSEMBLER_OPTIONS ""
 char CurrentDir[ FILENAME_MAX + 1 ];
 char StateFile[ FILENAME_MAX + 1 ] = STATE_FILE;
 char ComPort[ FILENAME_MAX + 1 ] = "COM1";
@@ -960,7 +961,7 @@ void load_statefile(const char *filename )
 	 *  1st line: COM port
 	 *  2nd line: Tools directory
 	 */
-	f = fopen( expand_filename( buffer, "wp34c.ini" ), "rt" );
+	f = fopen( expand_filename( buffer, "wp34s.ini" ), "rt" );
 	if ( f != NULL ) {
 		// COM port
 		p = fgets( buffer, FILENAME_MAX, f );
@@ -1010,7 +1011,7 @@ static void show_log( char *logname, int rc )
 
 static char* mktmpname(char* name, const char* prefix)
 {
-#ifdef QTGUI
+#if defined(QTGUI) || ( defined(USECURSES) && ! defined(WIN32) )
 	strcpy(name, "wp34s");
 	strcat(name, prefix);
 	strcat(name, "_XXXXXX");
@@ -1020,9 +1021,9 @@ static char* mktmpname(char* name, const char* prefix)
 #endif
 }
 
-void set_assembler(const char* toolsDir)
+void set_assembler(const char* assembler)
 {
-	strncpy(Assembler, toolsDir, FILENAME_MAX);
+	strncpy(Assembler, assembler, FILENAME_MAX);
 }
 
 #ifdef QTGUI
@@ -1067,7 +1068,7 @@ void import_textfile( const char *filename )
 		++logname;
 	}
 
-	sprintf( buffer, "%s -pp \"%s\" -o %s 1>%s 2>&1", Assembler, filename, tempname, logname );
+	sprintf( buffer, "%s %s -pp \"%s\" -o %s 1>%s 2>&1", Assembler, ASSEMBLER_OPTIONS, filename, tempname, logname );
 #ifdef QTGUI
 	getcwd(previousDir, IMPORT_BUFFER_SIZE);
 	chdir(getTmpDir());
@@ -1145,7 +1146,7 @@ static void write_pretty( const char *in, FILE *f ) {
 		else {
 			p = pretty( c );
 		}
-		if ( p == NULL ) {
+		if ( p == CNULL ) {
 			fputc( c, f );
 		}
 		else {

@@ -876,10 +876,20 @@ void cpx_roll_up(enum nilop op) {
 }
 
 void cpx_enter(enum nilop op) {
+#ifdef ENTRY_RPN
+	if(	State2.state_lift || (XromRunning || Running) ) {
+//Only duplicate if needed, otherwise ignore. CPX LOCK mode cannot run code, but the same exception as with non-cpx lock enter is added to make sure Xrom code does not break.
+		lift();
+		lift();
+		copyreg(get_reg_n(regY_idx), get_reg_n(regT_idx));
+		set_was_complex();
+	}
+#else
 	lift();
 	lift();
 	copyreg(get_reg_n(regY_idx), get_reg_n(regT_idx));
 	set_was_complex();
+#endif
 }
 
 #ifdef INCLUDE_C_LOCK
@@ -3912,9 +3922,20 @@ static void specials(const opcode op) {
 		break;
 
 	case OP_ENTER:
+#ifdef ENTRY_RPN
+		if (CmdLineLength && !(XromRunning || Running) ) { 
+//exclude stack lift if there is something in the input line AND if NOT running code i.e. Xrom or program
+			process_cmdline();     //JM
+		} else {                       //JM
+			process_cmdline();
+			lift();
+			clr_lift();
+		}                              //JM
+#else
 		process_cmdline();
 		lift();
 		clr_lift();
+#endif
 		break;
 
 	case OP_SIGMAPLUS:

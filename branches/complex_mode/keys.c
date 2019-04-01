@@ -234,6 +234,7 @@ static enum catalogues keycode_to_cat(const keycode c, enum shifts shift)
 		return CATALOGUE_NONE;
 	}
 #endif
+	// Common to both alpha mode and normal mode is the programming X.FCN catalogue
 	if (c == K53 && shift == SHIFT_H && ! State2.runmode && ! State2.cmplx && ! State2.multi)
 		return CATALOGUE_PROGXFCN;
 
@@ -474,6 +475,22 @@ void init_state(void) {
 	// clrretstk(0);
 
 	xset(&State2, 0, sizeof(State2));
+#ifdef INCLUDE_C_LOCK
+
+#ifdef DEFAULT_TO_J
+	SET_CPX_J;
+#endif
+
+#ifdef DEFAULT_TO_CPX_YES
+	cpx_nop(OP_CYES);
+#endif
+
+#ifdef DEFAULT_TO_C_LOCK
+	cpx_nop(OP_CYES);
+	cpx_nop(OP_C_ON);
+#endif
+
+#endif
 	State2.test = TST_NONE;
 	State2.runmode = 1;
 	update_program_bounds(1);
@@ -1535,7 +1552,7 @@ static void reset_arg(void) {
 
 static int arg_eval(unsigned int val) {
 	const unsigned int base = CmdBase;
-	const int r = RARG(base, val 
+	int r = RARG(base, val 
 				 + (State2.ind ? RARG_IND : 0) 
 		                 + (State2.local ? LOCAL_REG_BASE : 0));
 	const unsigned int ssize = (! UState.stack_depth || ! State2.runmode ) ? 4 : 8;
@@ -1544,6 +1561,23 @@ static int arg_eval(unsigned int val) {
 		/*
 		 *  Central argument checking for some commands
 		 */
+#ifdef SHOW_COMPLEX_REGS
+		if (argcmds[base].cmplx && val > TOPREALREG - 2 ) {
+
+
+
+
+
+			// remap complex registers cY->T, cZ->A, cT->C
+			                     // 99,   X,   Y,   Z,   T,   A,   B,   C,   D,   L,   I,   J,   K
+			static char remap[] = {  0, 100, 102, 104, 106,   0,   0,   0,   0, 108,   0, 110,   0 };
+			val = (unsigned int) remap[ val - (TOPREALREG - 1) ];
+			if ( val == 0 )
+				return STATE_UNFINISHED;
+
+			r = RARG(base, val);
+		}
+#endif
 #ifdef INCLUDE_C_LOCK
 		if (argcmds[base].cmplx && (val > (unsigned int)(C_LOCKED ? 0 : TOPREALREG - 2) && (val & 1))) {
 			if (C_LOCKED) {

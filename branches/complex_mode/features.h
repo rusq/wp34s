@@ -322,6 +322,14 @@
 // Enable complex lock mode. Requires RP_PREFIX, INCLUDE_YREG_CODE, INCLUDE_YREG_HMS, and EXTRA_FLAGS
 #define INCLUDE_C_LOCK
 
+//Various complex lock mode defaults
+//#define DEFAULT_TO_J // Still possible to change between I and J if this is selected
+//#define DEFAULT_TO_C_LOCK // Complex Lock mode on by default
+//#define DEFAULT_TO_CPX_YES // No need to XEQ CPXYES to turn on complex lock 
+
+// Enable Entry RPN (pressing Enter doesn't duplicate the x-register)
+//#define ENTRY_RPN
+
 // Y register is always displayed (cannot be turned off)
 //#define YREG_ALWAYS_ON
 
@@ -340,6 +348,9 @@
 // Show prefix for gradian mode when y-register is displayed (without this gradian mode is indicated by neither the RAD nor the 360 annunciators being shown)
 #define SHOW_GRADIAN_PREFIX
 
+// Show complex named registers as cX, cY, cZ, cT, cL and cJ (instead of X, Z, A, C, L and J)
+//#define SHOW_COMPLEX_REGS
+
 // Right-justify seven-segment exponent (007 or "  7" rather than "7  ")
 //#define INCLUDE_RIGHT_EXP
 
@@ -354,7 +365,7 @@
 //#define MODIFY_K62_E3_SWITCH
 
 // Indicate four-level stack by a '.' and eight-level stack by a ':'
-//#define SHOW_STACK_SIZE
+//7#define SHOW_STACK_SIZE
 
 // BEG annunciators indicates BIG stack size rather than beginning of program
 //#define MODIFY_BEG_SSIZE8

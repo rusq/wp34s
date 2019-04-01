@@ -53,6 +53,10 @@ static void dump1(const decNumber *a, const char *msg) {
 #define BIGMOD_DIGITS	820		/* Big enough for maxreal mod minreal */
 #define SINCOS_DIGITS	51		/* Extra digits to give an accurate COS at pi/2 -- only needs to be 46 or 47 but this is the next even size up */
 
+typedef struct {
+	decNumber n;
+	decNumberUnit extra[((SINCOS_DIGITS-DECNUMDIGITS+DECDPUN-1)/DECDPUN)];
+} sincosNumber;
 
 /* Some basic conditional tests */
 int dn_lt0(const decNumber *x) {
@@ -68,8 +72,8 @@ int dn_eq0(const decNumber *x) {
 }
 
 int dn_eq(const decNumber *x, const decNumber *y) {
-	decNumber a;
-	return decNumberIsZero(dn_compare(&a, x, y));
+	sincosNumber a;
+	return decNumberIsZero(dn_compare(&a.n, x, y));
 }
 
 int dn_eq1(const decNumber *x) {
@@ -77,8 +81,8 @@ int dn_eq1(const decNumber *x) {
 }
 
 int dn_lt(const decNumber *x, const decNumber *y) {
-	decNumber a;
-	return dn_lt0(dn_compare(&a, x, y));
+	sincosNumber a;
+	return dn_lt0(dn_compare(&a.n, x, y));
 }
 
 int dn_abs_lt(const decNumber *x, const decNumber *tol) {
@@ -950,11 +954,6 @@ decNumber *decNumberBigMod(decNumber *res, const decNumber *x, const decNumber *
 
 /* Calculate sin and cos by Taylor series
  */
-typedef struct {
-	decNumber n;
-	decNumberUnit extra[((SINCOS_DIGITS-DECNUMDIGITS+DECDPUN-1)/DECDPUN)];
-} sincosNumber;
-
 void sincosTaylor(const decNumber *a, decNumber *sout, decNumber *cout) {
 	sincosNumber a2, t, j, z, s, c;
 	int i, fins = sout == NULL, finc = cout == NULL;
@@ -1042,74 +1041,6 @@ static decNumber *decNumberDRG_internal(decNumber *res, const decNumber *x, s_op
 #undef DRG
 }
 
-
-/* Check for right angle multiples and if exact, return the apropriate
- * quadrant constant directly.
- */
-static int right_angle(decNumber *res, const decNumber *x,
-		const decNumber *quad, const decNumber *r0, const decNumber *r1,
-		const decNumber *r2, const decNumber *r3) {
-	decNumber r;
-	const decNumber *z;
-
-	decNumberRemainder(&r, x, quad, &Ctx);
-	if (!dn_eq0(&r))
-		return 0;
-
-	if (dn_eq0(x))
-		z = r0;
-	else {
-		dn_add(&r, quad, quad);
-		dn_compare(&r, &r, x);
-		if (dn_eq0(&r))
-			z = r2;
-		else if (decNumberIsNegative(&r))
-			z = r3;
-		else	z = r1;
-	}
-	decNumberCopy(res, z);
-	return 1;
-}
-
-/* Convert the number into radians.
- * We take the opportunity to reduce angles modulo 2 * PI here
- * For degrees and gradians, the reduction is exact and easy.
- * For radians, it involves a lot more computation.
- * For degrees and gradians, we return exact results
- * for right angles and multiples thereof.
- */
-static int cvt_2rad(decNumber *res, const decNumber *x,
-		const decNumber *r0, const decNumber *r1,
-		const decNumber *r2, const decNumber *r3) {
-	decNumber fm;
-	const decNumber *circle, *right;
-
-	switch (get_trig_mode()) {
-
-	case TRIG_RAD:
-		decNumberMod(res, x, &const_2PI);
-		break;
-
-	case TRIG_DEG:
-		circle = &const_360;
-		right = &const_90;
-		goto convert;
-
-	case TRIG_GRAD:
-		circle = &const_400;
-		right = &const_100;
-	convert:
-		decNumberMod(&fm, x, circle);
-		if (decNumberIsNegative(&fm))
-			dn_add(&fm, &fm, circle);
-		if (r0 != NULL && right_angle(res, &fm, right, r0, r1, r2, r3))
-			return 0;
-		decNumberDRG_internal(res, &fm, OP_2RAD);
-		break;
-	}
-	return 1;
-}
-
 static void cvt_rad2(decNumber *res, const decNumber *x) {
 	decNumberDRG_internal(res, x, OP_RAD2);	
 }
@@ -1130,34 +1061,96 @@ void dn_sincos(const decNumber *v, decNumber *sinv, decNumber *cosv)
 	}
 }
 
+/* Have to be careful here to ensure that every function we call can handle
+ * the increased size of the numbers we're using.
+ */
+static void cvt_2rad_sincos(decNumber *sin, decNumber *cos, const decNumber *xin) {
+	sincosNumber x, y;
+	static const decNumber * const degrees[4] = {
+		&const_45, &const_90, &const_180, &const_360
+	};
+	static const decNumber * const gradians[4] = {
+		&const_50, &const_100, &const_200, &const_400
+	};
+	const decNumber * const * thresholds = NULL;
+	int sneg = 0, cneg = 0, swap = 0;
+
+	switch (get_trig_mode()) {
+	case TRIG_RAD:
+		decNumberMod(&x.n, xin, &const_2PI);
+		sincosTaylor(&x.n, sin, cos);
+		return;
+
+	case TRIG_GRAD:
+		thresholds = gradians;
+		break;
+
+	case TRIG_DEG:
+		thresholds = degrees;
+		break;
+	}
+
+	// sin(-x) = -sin(x), cos(-x) = cos(x)
+	if (decNumberIsNegative(xin)) {
+		sneg = 1;
+		dn_minus(&x.n, xin);
+	} else
+		decNumberCopy(&x.n, xin);
+
+	decNumberMod(&x.n, &x.n, thresholds[3]);
+
+	// sin(180+x) = -sin(x), cos(180+x) = -cos(x)
+	if (dn_ge(&x.n, thresholds[2])) {
+		dn_subtract(&x.n, &x.n, thresholds[2]);
+		sneg = !sneg;
+		cneg = !cneg;
+	}
+
+	// sin(90+x) = cos(x), cos(90+x) = -sin(x)
+	if (dn_ge(&x.n, thresholds[1])) {
+		dn_subtract(&x.n, &x.n, thresholds[1]);
+		swap = 1;
+		cneg = !cneg;
+	}
+
+	// sin(90-x) = cos(x), cos(90-x) = sin(x)
+	if (dn_eq(&x.n, thresholds[0])) {
+		decNumberCopy(sin, &const_root2on2);
+		decNumberCopy(cos, &const_root2on2);
+	} else {
+		if (dn_gt(&x.n, thresholds[0])) {
+			dn_subtract(&x.n, thresholds[1], &x.n);
+			swap = !swap;
+		}
+		decNumberDRG_internal(&y.n, &x.n, OP_2RAD);
+		sincosTaylor(&y.n, swap?cos:sin, swap?sin:cos);
+	}
+
+    if (sneg) dn_minus(sin, sin);
+    if (cneg) dn_minus(cos, cos);
+}
+
 decNumber *decNumberSin(decNumber *res, const decNumber *x) {
-	decNumber x2;
+	decNumber c;
 
 	if (decNumberIsSpecial(x))
 		return set_NaN(res);
-	else {
-		if (cvt_2rad(&x2, x, &const_0, &const_1, &const_0, &const__1))
-			sincosTaylor(&x2, res, NULL);
-		else
-			decNumberCopy(res, &x2);
-	}
+	cvt_2rad_sincos(res, &c, x);
 	return res;
 }
 
 decNumber *decNumberCos(decNumber *res, const decNumber *x) {
-	decNumber x2;
+	decNumber s;
 
 	if (decNumberIsSpecial(x))
 		return set_NaN(res);
-	else {
-		if (cvt_2rad(&x2, x, &const_1, &const_0, &const__1, &const_0))
-			sincosTaylor(&x2, NULL, res);
-		else
-			decNumberCopy(res, &x2);
-	}
+	cvt_2rad_sincos(&s, res, x);
 	return res;
 }
 
+/* Have to be careful here to ensure that every function we call can handle
+ * the increased size of the numbers we're using.
+ */
 decNumber *decNumberTan(decNumber *res, const decNumber *x) {
 	sincosNumber x2, s, c;
 
@@ -1166,14 +1159,13 @@ decNumber *decNumberTan(decNumber *res, const decNumber *x) {
 	else {
 		const int digits = Ctx.digits;
 		Ctx.digits = SINCOS_DIGITS;
-		if (cvt_2rad(&x2.n, x, &const_0, &const_NaN, &const_0, &const_NaN)) {
-			sincosTaylor(&x2.n, &s.n, &c.n);
-			dn_divide(&x2.n, &s.n, &c.n);
-		}
+		cvt_2rad_sincos(&s.n, &c.n, x);
+		if (decNumberIsZero(&c.n))
+			return set_NaN(res);
+		dn_divide(&x2.n, &s.n, &c.n);
 		Ctx.digits = digits;
-		dn_plus(res, &x2.n);
+		return dn_plus(res, &x2.n);
 	}
-	return res;
 }
 
 #if 0

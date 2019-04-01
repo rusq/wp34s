@@ -38,6 +38,11 @@ typedef struct _flash_region {
 extern FLASH_REGION UserFlash;
 extern TPersistentRam BackupFlash;
 
+#ifndef REALBUILD
+// Flag for "Export Program..."
+extern int UseAliasNames;
+#endif
+
 extern unsigned short int crc16(const void *base, unsigned int length);
 extern unsigned short int checksum_program(void);
 extern int checksum_ram(void);
@@ -74,7 +79,7 @@ extern void save_statefile( const char *filename );
 extern void load_statefile( const char *filename );
 extern void import_textfile( const char *filename );
 extern void export_textfile( const char *filename );
-extern void set_assembler(const char* toolsDir);
+extern void set_assembler(const char* assembler);
 #endif
 
 #endif

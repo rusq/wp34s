@@ -16,7 +16,6 @@
 
 #define COMPILE_CATALOGUES
 #define NOCURSES 1
-// #undef REALBUILD
 
 #include "consts.h"
 #include "xeq.h"
@@ -358,6 +357,7 @@ static s_opcode cplx_catalogue[] = {
 	CMON(OP_CUBE,		"x[^3]")
 	CMON(OP_CUBERT,		"[^3][sqrt]")
 	NILIC(OP_DROPXY,	"DROP")
+	RARGCMD(RARG_CSWAPZ,	"z[<->]")
 	CMON(OP_EXPM1,		"e^x-1")
 	CMON(OP_FIB,		"FIB")
 	CMON(OP_LN1P,		"LN1P")
@@ -1309,6 +1309,9 @@ int main(int argc, char *argv[]) {
 		printf("%d, ", opcode_breaks[i]);
 	printf("\n};\n\n");
 
+#ifdef INCLUDE_STOPWATCH
+	printf("/* With STOPW */\n");
+#endif
 	CAT(catalogue);
 	CAT(program_xfcn);
 	CAT(cplx_catalogue);

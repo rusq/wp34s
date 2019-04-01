@@ -182,7 +182,7 @@ my $report_op_svn = 1;
 my $enable_pp = 0;
 my $DEFAULT_PREPROC = "wp34s_pp.pl";
 my $preproc = $DEFAULT_PREPROC;
-my $preproc_fallback_dir = "";
+my $preproc_fallback_dir = "C:/Users/nd/wp34s/new_up_to_date/code/branches/complex_mode/tools/";
 
 # Custom arguments that can be passed to PP.
 my $pp_args = "";

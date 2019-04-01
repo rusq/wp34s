@@ -53,7 +53,7 @@ endif
 ifeq "$(SYSTEM)" "Ios64"
     ARCH=arm64
     DEVICE=OS
-    CC_FLAGS=-arch $(ARCH) -I$(IOS_DEVROOT)/SDKs/iPhone$(DEVICE).sdk/usr/include -DFIX_64_BITS=1
+    CC_FLAGS=-arch $(ARCH) -I$(IOS_DEVROOT)/SDKs/iPhone$(DEVICE).sdk/usr/include -DFIX_64_BITS=1 
     BASE_LDFLAGS=-L$(IOS_DEVROOT)/SDKs/iPhone$(DEVICE).sdk/usr/lib
 endif
 ifeq "$(SYSTEM)" "IosSimulator"
@@ -71,7 +71,7 @@ IOS_XCODE_ROOT := /Applications/Xcode.app/Contents/Developer
 IOS_DEVROOT := $(IOS_XCODE_ROOT)/Platforms/iPhone$(DEVICE).platform/Developer
 IOS_SDKROOT := $(IOS_DEVROOT)/SDKs/iPhone$(DEVICE).sdk
 CC=$(IOS_XCODE_ROOT)/usr/bin/gcc $(CC_FLAGS)
-BASE_CFLAGS += -isysroot ${IOS_SDKROOT} -Iheaders $(CFLAGS_FLAGS) -DIOS=1 -miphoneos-version-min=7.0
+BASE_CFLAGS += -isysroot ${IOS_SDKROOT} -Iheaders $(CFLAGS_FLAGS) -DIOS=1 -miphoneos-version-min=6.0
 USE_CURSES :=
 else
 SYSTEM := $(shell uname)
@@ -189,7 +189,7 @@ HOSTCFLAGS += -m32
 # endif
 HOSTCFLAGS += -DREALBUILD=1
 ifdef NOWD
-CFLAGS += -DNOWD
+CFLAGS += -DNOWD=1
 endif
 ifdef DISABLE_XTAL
 CFLAGS += -DDISABLE_XTAL=1
@@ -303,7 +303,7 @@ MAIN := $(OBJECTDIR)/main.o
 else
 MAIN := $(OBJECTDIR)/console.o
 endif
-OPCODES := $(TOOLS)/wp34c.op
+OPCODES := $(TOOLS)/wp34s.op
 
 # Targets and rules
 

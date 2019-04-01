@@ -27,11 +27,11 @@
 #define VERSION_STRING  "3.3"
 
 #if defined(INFRARED)
-#define VERS_DISPLAY "34S\006" VERSION_STRING "\222"
+#define VERS_DISPLAY "34C\006" VERSION_STRING "\222"
 #elif defined(INCLUDE_STOPWATCH)
-#define VERS_DISPLAY "34S\006" VERSION_STRING "T\006"
+#define VERS_DISPLAY "34C\006" VERSION_STRING "T\006"
 #else
-#define VERS_DISPLAY "34S\006" VERSION_STRING "\006\006"
+#define VERS_DISPLAY "34C\006" VERSION_STRING "\006\006"
 #endif
 #define VERS_SVN_OFFSET (sizeof(VERS_DISPLAY) - 1)
 
@@ -466,6 +466,9 @@ extern int current_catalogue_max(void);
 #define NUMFLG          NUMREG                          // These two must match!
 
 #define REGNAMES        "XYZTABCDLIJK"
+#ifdef SHOW_COMPLEX_REGS
+#define COMPLEX_REGNAMES "X?Y?Z?T?L?J?"
+#endif
 
 #define regX_idx        (TOPREALREG)
 #define regY_idx        (TOPREALREG+1)

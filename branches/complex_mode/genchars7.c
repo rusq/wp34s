@@ -22,7 +22,7 @@
 
 
 #define DIG(ch, bits) { ch, # bits }
-;
+
 static struct pair {
 	unsigned char ch;
 	const char * segs;
@@ -42,6 +42,7 @@ static struct pair {
 
 	DIG('A',		D_TOP | D_TL | D_TR | D_MIDDLE | D_BL | D_BR),
 	DIG('a',		D_TOP | D_TL | D_TR | D_MIDDLE | D_BL | D_BR),
+	//DIG('a',		D_TOP | D_TR | D_MIDDLE | D_BL | D_BR | D_BOTTOM),
 	DIG('B',		D_TL | D_MIDDLE | D_BL | D_BR | D_BOTTOM),
 	DIG('b',		D_TL | D_MIDDLE | D_BL | D_BR | D_BOTTOM),
 	DIG('C',		D_TOP | D_TL | D_BL | D_BOTTOM),
@@ -60,8 +61,8 @@ static struct pair {
 	DIG('i',		D_BL),
 	DIG('J',		D_TR | D_BL | D_BR | D_BOTTOM),
 	DIG('j',		D_TR | D_BL | D_BR | D_BOTTOM),
-	DIG('K',		D_TL | D_BL | D_BR),
-	DIG('k',		D_TL | D_BL | D_BR),
+	DIG('K',		D_TOP | D_TL | D_MIDDLE | D_BL | D_BR),
+	DIG('k',		D_TOP | D_TL | D_MIDDLE | D_BL | D_BR),
 	DIG('L',		D_TL | D_BL | D_BOTTOM),
 	DIG('l',		D_TL | D_BL | D_BOTTOM),
 	DIG('M',		D_TOP | D_TL | D_TR | D_BL),		// left half of M
@@ -91,7 +92,7 @@ static struct pair {
 	DIG('\'',		D_TL),					// minute
 	DIG('"',		D_TL | D_TR),				// second
 #if defined(INCLUDE_CASIO_SEPARATOR)
-	DIG('/',		D_BOTTOM | D_BR),		// fraction vinculum; CASIO version
+	DIG('/',		D_BOTTOM | D_BR),			// fraction vinculum; CASIO version
 #else
 	DIG('/',		D_TR | D_MIDDLE | D_BL),		// fraction vinculum
 #endif
