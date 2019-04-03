@@ -48,7 +48,7 @@
 //#define INTERRUPT_XROM_TICKS 10
 
 // Include the pixel plotting commands
-// #define INCLUDE_PLOTTING
+ #define INCLUDE_PLOTTING
 
 // Build a tiny version of the device
 // #define TINY_BUILD
@@ -69,7 +69,7 @@
 // functions and their complex variants with one universal dispatch function.
 // It saves approximately 280 bytes in the firmware.
 // This is an EXPERIMENTAL FEATURE that hasn't yet received adequate testing.
-#define UNIVERSAL_DISPATCH
+// #define UNIVERSAL_DISPATCH
 
 // Code to allow access to caller's local data from xIN-code
 // #define ENABLE_COPYLOCALS
@@ -93,7 +93,7 @@
 
 // Include the Gudermannian functions and their inverses in the real
 // and complex domain.
-//#define INCLUDE_GUDERMANNIAN
+// #define INCLUDE_GUDERMANNIAN
 
 // Include first and second order Bessel functions Jn, In, Yn and Kn for
 // both real and complex arguments.  These are implemented in XROM.
@@ -328,7 +328,7 @@
 //#define DEFAULT_TO_CPX_YES // No need to XEQ CPXYES to turn on complex lock 
 
 // Enable Entry RPN (pressing Enter doesn't duplicate the x-register)
-//#define ENTRY_RPN
+// #define ENTRY_RPN
 
 // Y register is always displayed (cannot be turned off)
 //#define YREG_ALWAYS_ON

@@ -8,7 +8,7 @@ The makeflash.cmd batch file in branches/complex_mode can be used to build the f
 To save space the files are currently compiled with the following options:
 
 * Pixel plotting commands disabled
-* Bit's "Universal Dispatch" code enabled; although still labelled experimental, it seems to work fine
+* Bit's "Universal Dispatch" code enabled; although still labelled experimental, it seems to work fine NOTE: as of version 3903 this is now disabled - it causes problems with xrom code.
 * Gudermannian functions disabled
 
 At present the number of program steps that will fit into free flash memory is:

@@ -1,0 +1,13 @@
+Changes:
+* Have stopped using Universal Dispatch - now commented out in features.h. This was causing an error with the inverse normal distribution (and 
+presumably other functions as well) on the real calculator, although not on the emulator. This error has been present in every previous version of 
+Complex Lock Mode.
+* Entry RPN has been added as an option in features.h (thanks to Jaco@cocoon-creations.com for the code for this). Versions of the emulator and the 
+calculator firmware have been included with this feature turned on so that users can try it out.
+* New emulator skins (also provided by Jaco@cocoon-creations.com) have been added to both the main branch and Complex Lock Mode.
+* Those changes over the past year that didn't get applied to the complex lock branch have now been applied - so far as I am aware, everything is 
+up-to-date.
+* In features.h there is now the option to set various complex lock mode options as defaults - j rather than i, CPXYES automatically enabled, 
+complex lock mode on by default.
+* The VERS command now returns "34C..." rather than "34S..." for the complex lock firmware.
+3rd April 2019
