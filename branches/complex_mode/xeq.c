@@ -4531,9 +4531,13 @@ static void niladic(const opcode op) {
 	} else
 		illegal(op);
 #ifdef INCLUDE_C_LOCK
-	if ( (idx != OP_rCLX) && ( ((idx != OP_CENTER) && (idx != OP_PIB) ) && (C_LOCKED) ) ) // turns off lift after CENTER in C_LOCK mode
+#ifdef ENTRY_RPN
+	if (idx != OP_rCLX) // in entry_rpn mode, lift must be on after enter so the second part below isn't wanted
 #else
-	if (idx != OP_rCLX)
+	if ( (idx != OP_rCLX) && ( ((idx != OP_CENTER) ) && (C_LOCKED) ) ) // don't turn on lift after CENTER (complex enter) in C_LOCK mode
+#endif
+#else
+	if (idx != OP_rCLX) // normally, just don't turn on lift after CLX
 #endif
 		set_lift();
 }

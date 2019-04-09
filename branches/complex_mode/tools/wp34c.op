@@ -271,82 +271,76 @@ maxlibsteps=9999
 0x01a0	cmd	REALM?
 0x01a1	cmd	x=+0?
 0x01a2	cmd	x=-0?
-0x01a3	cmd	MROW[<->]
-0x01a3	alias-c	MROW<>
-0x01a4	cmd	MROW[times]
-0x01a4	alias-c	MROW*
-0x01a5	cmd	MROW+[times]
-0x01a5	alias-c	MROW+*
-0x01a6	cmd	M.SQR?
-0x01a7	cmd	M[^-1]
-0x01a7	alias-c	M.INV
-0x01a8	cmd	PopLR
-0x01a9	cmd	MEM?
-0x01aa	cmd	LocR?
-0x01ab	cmd	REGS?
-0x01ac	cmd	FLASH?
-0x01ad	cmd	SENDP
-0x01ae	cmd	SENDR
-0x01af	cmd	SEND[SIGMA]
-0x01af	alias-c	SENDSUMS
-0x01b0	cmd	SENDA
-0x01b1	cmd	RECV
-0x01b2	cmd	SAVE
-0x01b3	cmd	LOAD
-0x01b4	cmd	LOADSS
-0x01b5	cmd	LOADP
-0x01b6	cmd	PRCL
-0x01b7	cmd	PSTO
-0x01b8	cmd	LOADR
-0x01b9	cmd	LOAD[SIGMA]
-0x01b9	alias-c	LOADSUMS
-0x01ba	cmd	DBLON
-0x01bb	cmd	DBLOFF
-0x01bc	cmd	DBL?
-0x01bd	cmd	[cmplx]i
-0x01bd	alias-c	ci
-0x01be	cmd	DATE[->]
-0x01be	alias-c	DATE>
-0x01bf	cmd	[cmplx]DOT
-0x01bf	alias-c	cDOT
-0x01c0	cmd	[cmplx]CROSS
-0x01c0	alias-c	cCROSS
-0x01c1	cmd	[print]PROG
-0x01c1	alias-c	P.PROG
-0x01c2	cmd	[print]REGS
-0x01c2	alias-c	P.REGS
-0x01c3	cmd	[print]STK
-0x01c3	alias-c	P.STK
-0x01c4	cmd	[print][SIGMA]
-0x01c4	alias-c	P.SUMS
-0x01c5	cmd	[print][alpha]
-0x01c5	alias-c	P.a
-0x01c6	cmd	[print][alpha]+
-0x01c6	alias-c	P.a+
-0x01c7	cmd	[print]+[alpha]
-0x01c7	alias-c	P.+a
-0x01c8	cmd	[print]ADV
-0x01c8	alias-c	P.ADV
-0x01c9	cmd	[print]WIDTH
-0x01c9	alias-c	P.WIDTH
-0x01ca	cmd	XTAL?
-0x01cb	cmd	[print]?
-0x01cb	alias-c	PRT?
-0x01cc	cmd	YDON
-0x01cd	cmd	YDOFF
-0x01ce	cmd	CPX
-0x01cf	cmd	C_LK
-0x01d0	cmd	UNLK
-0x01d1	cmd	-IM
-0x01d2	cmd	-RE
-0x01d3	cmd	REAL
-0x01d4	cmd	IMAG
-0x01d5	cmd	->PI
-0x01d6	cmd	*PI
-0x01d7	cmd	CPXI
-0x01d8	cmd	CPXJ
-0x01d9	cmd	CPXYES
-0x01da	cmd	CPXNO
+0x01a3	cmd	M.SQR?
+0x01a4	cmd	M[^-1]
+0x01a4	alias-c	M.INV
+0x01a5	cmd	PopLR
+0x01a6	cmd	MEM?
+0x01a7	cmd	LocR?
+0x01a8	cmd	REGS?
+0x01a9	cmd	FLASH?
+0x01aa	cmd	SENDP
+0x01ab	cmd	SENDR
+0x01ac	cmd	SEND[SIGMA]
+0x01ac	alias-c	SENDSUMS
+0x01ad	cmd	SENDA
+0x01ae	cmd	RECV
+0x01af	cmd	SAVE
+0x01b0	cmd	LOAD
+0x01b1	cmd	LOADSS
+0x01b2	cmd	LOADP
+0x01b3	cmd	PRCL
+0x01b4	cmd	PSTO
+0x01b5	cmd	LOADR
+0x01b6	cmd	LOAD[SIGMA]
+0x01b6	alias-c	LOADSUMS
+0x01b7	cmd	DBLON
+0x01b8	cmd	DBLOFF
+0x01b9	cmd	DBL?
+0x01ba	cmd	[cmplx]i
+0x01ba	alias-c	ci
+0x01bb	cmd	DATE[->]
+0x01bb	alias-c	DATE>
+0x01bc	cmd	[cmplx]DOT
+0x01bc	alias-c	cDOT
+0x01bd	cmd	[cmplx]CROSS
+0x01bd	alias-c	cCROSS
+0x01be	cmd	[print]PROG
+0x01be	alias-c	P.PROG
+0x01bf	cmd	[print]REGS
+0x01bf	alias-c	P.REGS
+0x01c0	cmd	[print]STK
+0x01c0	alias-c	P.STK
+0x01c1	cmd	[print][SIGMA]
+0x01c1	alias-c	P.SUMS
+0x01c2	cmd	[print][alpha]
+0x01c2	alias-c	P.a
+0x01c3	cmd	[print][alpha]+
+0x01c3	alias-c	P.a+
+0x01c4	cmd	[print]+[alpha]
+0x01c4	alias-c	P.+a
+0x01c5	cmd	[print]ADV
+0x01c5	alias-c	P.ADV
+0x01c6	cmd	[print]WIDTH
+0x01c6	alias-c	P.WIDTH
+0x01c7	cmd	XTAL?
+0x01c8	cmd	[print]?
+0x01c8	alias-c	PRT?
+0x01c9	cmd	YDON
+0x01ca	cmd	YDOFF
+0x01cb	cmd	CPX
+0x01cc	cmd	C_LK
+0x01cd	cmd	UNLK
+0x01ce	cmd	-IM
+0x01cf	cmd	-RE
+0x01d0	cmd	REAL
+0x01d1	cmd	IMAG
+0x01d2	cmd	->PI
+0x01d3	cmd	*PI
+0x01d4	cmd	CPXI
+0x01d5	cmd	CPXJ
+0x01d6	cmd	CPXYES
+0x01d7	cmd	CPXNO
 0x0200	cmd	FP
 0x0201	cmd	FLOOR
 0x0202	cmd	CEIL
@@ -587,7 +581,6 @@ maxlibsteps=9999
 0x0293	cmd	nCOL
 0x0294	cmd	M.IJ
 0x0295	cmd	DET
-0x0296	cmd	M.LU
 0x0300	cmd	y[^x]
 0x0300	alias-c	y^x
 0x0301	cmd	+
@@ -2626,35 +2619,23 @@ maxlibsteps=9999
 0xa700	arg	#	max=256
 0xa800	arg	[cmplx]#	max=256
 0xa800	alias-a	c#	max=256
-0xa900	arg	CNST	max=89,indirect
-0xaa00	arg	[cmplx]CNST	max=89,indirect
-0xaa00	alias-a	cCNST	max=89,indirect
-0xab00	arg	[print]r	max=128,indirect,stack
-0xab00	alias-a	P.r	max=128,indirect,stack
-0xac00	arg	[print]#	max=128,indirect
-0xac00	alias-a	P.#	max=128,indirect
-0xad00	arg	[print]CHR	max=128,indirect
-0xad00	alias-a	P.CHR	max=128,indirect
-0xae00	arg	[print]TAB	max=128,indirect
-0xae00	alias-a	P.TAB	max=128,indirect
-0xaf00	arg	[print]MODE	max=4,indirect
-0xaf00	alias-a	P.MODE	max=4,indirect
-0xb000	arg	[print]DLAY	max=32,indirect
-0xb000	alias-a	P.DLAY	max=32,indirect
-0xb100	arg	[print][cmplx]r[sub-x][sub-y]	max=128,indirect,stack,complex
-0xb100	alias-a	P.crect	max=128,indirect,stack,complex
-0xb200	arg	gDIM	max=128,indirect,local
-0xb300	arg	gDIM?	max=128,indirect,local
-0xb400	arg	gSET	max=128,indirect,local
-0xb500	arg	gCLR	max=128,indirect,local
-0xb600	arg	gFLP	max=128,indirect,local
-0xb700	arg	gPIX?	max=128,indirect,local
-0xb800	arg	gPLOT	max=128,indirect,local
-0xb900	arg	[print]PLOT	max=128,indirect,local
-0xb900	alias-a	P.PLOT	max=128,indirect,local
-0xba00	arg	CASE	max=128,indirect,stack
-0xbb00	arg	[cmplx]VIEW	max=128,indirect,stack,complex
-0xbb00	alias-a	cVIEW	max=128,indirect,stack,complex
+0xa900	arg	[print]r	max=128,indirect,stack
+0xa900	alias-a	P.r	max=128,indirect,stack
+0xaa00	arg	[print]#	max=128,indirect
+0xaa00	alias-a	P.#	max=128,indirect
+0xab00	arg	[print]CHR	max=128,indirect
+0xab00	alias-a	P.CHR	max=128,indirect
+0xac00	arg	[print]TAB	max=128,indirect
+0xac00	alias-a	P.TAB	max=128,indirect
+0xad00	arg	[print]MODE	max=4,indirect
+0xad00	alias-a	P.MODE	max=4,indirect
+0xae00	arg	[print]DLAY	max=32,indirect
+0xae00	alias-a	P.DLAY	max=32,indirect
+0xaf00	arg	[print][cmplx]r[sub-x][sub-y]	max=128,indirect,stack,complex
+0xaf00	alias-a	P.crect	max=128,indirect,stack,complex
+0xb000	arg	CASE	max=128,indirect,stack
+0xb100	arg	[cmplx]VIEW	max=128,indirect,stack,complex
+0xb100	alias-a	cVIEW	max=128,indirect,stack,complex
 0xf000	mult	LBL
 0xf100	mult	LBL?
 0xf200	mult	XEQ

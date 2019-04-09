@@ -39,7 +39,6 @@ cft→l	cft[->]l	cft>l
 CLα	CL[alpha]	CLa
 CLΣ	CL[SIGMA]	CLSUMS
 cm→inches	cm[->]inches	cm>inches
-©CNST	[cmplx]CNST	cCNST
 ©COMB	[cmplx]COMB	cCOMB
 ©CONJ	[cmplx]CONJ	cCONJ
 ©COS	[cmplx]COS	cCOS
@@ -145,9 +144,6 @@ miles→km	miles[->]km	miles>km
 ml→flozUK	ml[->]flozUK	ml>flozUK
 ml→flozUS	ml[->]flozUS	ml>flozUS
 mmHg→Pa	mmHg[->]Pa	mmHg>Pa
-MROW+×	MROW+[times]	MROW+*
-MROW×	MROW[times]	MROW*
-MROW⇆	MROW[<->]	MROW<>
 M+×	M+[times]	M+*
 M⁸	M[^-1]	M.INV
 M×	M[times]	M*
@@ -340,8 +336,8 @@ z⇆	z[<->]	z<>
 Σ+	[SIGMA]+	SIGMA+
 Σ-	[SIGMA]-	SIGMA-
 Φᵤ(x)	[PHI][sub-u](x)	Q-u
-Φ(x)	[PHI](x)	PHI(x)
 φ(x)	[phi](x)	phi(x)
+Φ(x)	[PHI](x)	PHI(x)
 Φ⁸(p)	[PHI][^-1](p)	INV-PHI
 χ²	[chi][^2]	CHI2
 χ²INV	[chi][^2]INV	INV-CHI2
@@ -378,7 +374,6 @@ z⇆	z[<->]	z<>
 ⎙©rₓᵧ	[print][cmplx]r[sub-x][sub-y]	P.crect
 ⎙DLAY	[print]DLAY	P.DLAY
 ⎙MODE	[print]MODE	P.MODE
-⎙PLOT	[print]PLOT	P.PLOT
 ⎙PROG	[print]PROG	P.PROG
 ⎙r	[print]r	P.r
 ⎙REGS	[print]REGS	P.REGS
@@ -605,7 +600,6 @@ cCHS	©+/-	[cmplx]+/-
 CLa	CLα	CL[alpha]
 CLSUMS	CLΣ	CL[SIGMA]
 cm>inches	cm→inches	cm[->]inches
-cCNST	©CNST	[cmplx]CNST
 cCOMB	©COMB	[cmplx]COMB
 cCONJ	©CONJ	[cmplx]CONJ
 cCOS	©COS	[cmplx]COS
@@ -753,9 +747,6 @@ miles>km	miles→km	miles[->]km
 ml>flozUK	ml→flozUK	ml[->]flozUK
 ml>flozUS	ml→flozUS	ml[->]flozUS
 mmHg>Pa	mmHg→Pa	mmHg[->]Pa
-MROW*	MROW×	MROW[times]
-MROW+*	MROW+×	MROW+[times]
-MROW<>	MROW⇆	MROW[<->]
 N>lbf	N→lbf	N[->]lbf
 nmi>km	nmi→km	nmi[->]km
 Norml-p	Normlₚ	Norml[sub-p]
@@ -771,7 +762,6 @@ P.CHR	⎙CHR	[print]CHR
 P.crect	⎙©rₓᵧ	[print][cmplx]r[sub-x][sub-y]
 P.DLAY	⎙DLAY	[print]DLAY
 P.MODE	⎙MODE	[print]MODE
-P.PLOT	⎙PLOT	[print]PLOT
 P.PROG	⎙PROG	[print]PROG
 P.r	⎙r	[print]r
 P.REGS	⎙REGS	[print]REGS
@@ -1055,8 +1045,8 @@ c||	©||	[cmplx]||
 [cmplx][GAMMA]	©Γ	cGAMMA
 [GAMMA][sub-p]	Γₚ	GAMMAP
 [GAMMA][sub-q]	Γₛ	GAMMAQ
-[GAMMA][sub-x][sub-y]	Γₓᵧ	GAMMAxy
 [gamma][sub-x][sub-y]	γₓᵧ	gammaxy
+[GAMMA][sub-x][sub-y]	Γₓᵧ	GAMMAxy
 [infinity]?	∞?	INF?
 [integral]	∫	INTG
 [phi](x)	φ(x)	phi(x)
@@ -1075,7 +1065,6 @@ c||	©||	[cmplx]||
 [print]CHR	⎙CHR	P.CHR
 [print]DLAY	⎙DLAY	P.DLAY
 [print]MODE	⎙MODE	P.MODE
-[print]PLOT	⎙PLOT	P.PLOT
 [print]PROG	⎙PROG	P.PROG
 [print]r	⎙r	P.r
 [print]REGS	⎙REGS	P.REGS
@@ -1141,7 +1130,6 @@ cft[->]l	cft→l	cft>l
 CL[alpha]	CLα	CLa
 CL[SIGMA]	CLΣ	CLSUMS
 cm[->]inches	cm→inches	cm>inches
-[cmplx]CNST	©CNST	cCNST
 [cmplx]COMB	©COMB	cCOMB
 [cmplx]CONJ	©CONJ	cCONJ
 [cmplx]COS	©COS	cCOS
@@ -1252,9 +1240,6 @@ miles[->]km	miles→km	miles>km
 ml[->]flozUK	ml→flozUK	ml>flozUK
 ml[->]flozUS	ml→flozUS	ml>flozUS
 mmHg[->]Pa	mmHg→Pa	mmHg>Pa
-MROW+[times]	MROW+×	MROW+*
-MROW[<->]	MROW⇆	MROW<>
-MROW[times]	MROW×	MROW*
 N[->]lbf	N→lbf	N>lbf
 n[SIGMA]	nΣ	nSUM
 nmi[->]km	nmi→km	nmi>km

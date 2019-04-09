@@ -1028,9 +1028,18 @@ static int process_c_lock ( const keycode c ) { // main function - called from p
 				return OP_NIL | OP_PIA;
 			}
 		}
-		else if (shift == SHIFT_H) { // normal pi key - enables stack lift
-			finish_cpx_entry(1);
-			return process_cmplx(c);
+		else {
+#if INCLUDE_EEX_PI == 2
+			const int eex_pi = 1;
+#elif INCLUDE_EEX_PI == 1
+			const int eex_pi = get_user_flag(regL_idx);
+#else
+			const int eex_pi = 0;
+#endif
+			if ( (shift == SHIFT_H) || (eex_pi && (shift == SHIFT_N) && CmdLineLength == 0) ) { // normal pi key - enables stack lift; now works with INCLUDE_EEX_PI too
+				finish_cpx_entry(1);
+				return process_cmplx(c);
+			}
 		}
 	}
 

@@ -48,7 +48,7 @@
 //#define INTERRUPT_XROM_TICKS 10
 
 // Include the pixel plotting commands
- #define INCLUDE_PLOTTING
+// #define INCLUDE_PLOTTING
 
 // Build a tiny version of the device
 // #define TINY_BUILD
@@ -63,7 +63,7 @@
 // #define INCLUDE_USER_CATALOGUE
 
 // Include the CNSTS command to access constants via indirection
-#define INCLUDE_INDIRECT_CONSTS
+// #define INCLUDE_INDIRECT_CONSTS
 
 // Replace dispatch functions for calling niladic, monadic, dyadic and triadic
 // functions and their complex variants with one universal dispatch function.
@@ -128,11 +128,11 @@
 
 // Include matrix row/row operations.
 // M.R<->, M.R*, M.R+
-#define MATRIX_ROWOPS
+// #define MATRIX_ROWOPS
 
 // Include the LU decomposition as a user command
 // M.LU
-#define MATRIX_LU_DECOMP
+// #define MATRIX_LU_DECOMP
 
 // Include fast path code to calculate factorials and gamma functions
 // for positive integers using a string of multiplications.
@@ -328,7 +328,7 @@
 //#define DEFAULT_TO_CPX_YES // No need to XEQ CPXYES to turn on complex lock 
 
 // Enable Entry RPN (pressing Enter doesn't duplicate the x-register)
-// #define ENTRY_RPN
+//#define ENTRY_RPN
 
 // Y register is always displayed (cannot be turned off)
 //#define YREG_ALWAYS_ON
@@ -365,7 +365,7 @@
 //#define MODIFY_K62_E3_SWITCH
 
 // Indicate four-level stack by a '.' and eight-level stack by a ':'
-//7#define SHOW_STACK_SIZE
+//#define SHOW_STACK_SIZE
 
 // BEG annunciators indicates BIG stack size rather than beginning of program
 //#define MODIFY_BEG_SSIZE8
