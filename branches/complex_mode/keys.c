@@ -477,6 +477,24 @@ void init_state(void) {
 	xset(&State2, 0, sizeof(State2));
 #ifdef INCLUDE_C_LOCK
 
+#ifdef DEFAULT_TO_SSIZE8 							//JM3
+    INIT_8;  										//JM3
+	UState.stack_depth = 1; // set stack size to 8 	//JM3
+#endif  											//JM3
+
+
+#ifdef DEFAULT_DATE_YMD			//JM5
+	UState.date_mode = 1;		//JM5
+#endif							//JM5
+
+#ifdef DEFAULT_DATE_MDY			//JM5
+	UState.date_mode = 2;		//JM5
+#endif							//JM5
+
+#ifdef YREG_ON_BY_DEFAULT
+	UState.show_y = 1;
+#endif
+
 #ifdef DEFAULT_TO_J
 	SET_CPX_J;
 #endif
@@ -489,7 +507,6 @@ void init_state(void) {
 	cpx_nop(OP_CYES);
 	cpx_nop(OP_C_ON);
 #endif
-
 #endif
 	State2.test = TST_NONE;
 	State2.runmode = 1;
@@ -654,6 +671,9 @@ static int process_normal(const keycode c)
 			return STATE_UNFINISHED;
 		process_cmdline_set_lift();
 		State2.arrow = 1;
+#ifdef REVERSE_ARROW 								//JM4
+		State2.dot = 0; // direction of arrow   	//JM4
+#endif  											//JM4
 		set_shift(SHIFT_G);
 		break;
 
@@ -1346,11 +1366,43 @@ static int process_arrow(const keycode c) {
 	const int shift = reset_shift();
 	const int f = (shift == SHIFT_F);
 
+#ifdef REVERSE_ARROW 								//JM4
+	if (c == K_ARROW) {								//JM4
+		State2.dot ^= 1; // reverse arrow			//JM4
+		set_shift(SHIFT_G);							//JM4
+		return STATE_UNFINISHED;					//JM4
+	}												//JM4
+#endif  											//JM4
+
+	
 	State2.arrow = 0;
 	if (shift == SHIFT_N) return STATE_UNFINISHED;
 	
+
+#ifdef REVERSE_ARROW 								//JM4
+	if (c >= K10 && c <= K12) {						//JM4
+		if (State2.dot) { // reversed arrow								//JM4
+			if (f) return STATE_UNFINISHED;								//JM4
+			if (OP_DEG2 == (OP_2DEG + 3) && OP_RAD2 == (OP_2RAD + 3) && OP_GRAD2 == (OP_2GRAD + 3))		//JM4
+				return op_map[c - K10][0] + 3; // smaller code			//JM4
+			else { // generic code										//JM4
+				static const unsigned short int op_map_rev[] = {		//JM4
+					OP_MON | OP_DEG2,				//JM4
+					OP_MON | OP_RAD2,				//JM4
+					OP_MON | OP_GRAD2				//JM4
+				};									//JM4
+
+				return op_map_rev[c - K10];			//JM4
+			}										//JM4
+		}											//JM4
+		else return op_map[c - K10][f];				//JM4
+	}												//JM4
+#else									//JM4
 	if (c >= K10 && c <= K12)
 		return op_map[c - K10][f];
+#endif									//JM4
+
+
 
 #ifdef INCLUDE_C_LOCK
 	if (c == K_CMPLX && CPX_ENABLED) {
@@ -1363,8 +1415,14 @@ static int process_arrow(const keycode c) {
 	}
 #endif
 
+
+#ifdef REVERSE_ARROW 								//JM4
+	if ((c == K22 || c == K23) && !State2.dot) 		//JM4
+#else 												//JM4
 	if (c == K22 || c == K23)
+#endif 												//JM4
 		set_smode(disp[c - K22][f]);
+
 
 	return STATE_UNFINISHED;
 }

@@ -15,17 +15,38 @@ To save space the files are currently compiled with the following options in fea
 * Matrix LU decomposition disabled
 
 At present the number of program steps that will fit into free flash memory is:
-As of 3904:
+As of 3905:
 Complex Lock plus above compile options:
 * calc.bin - 6656 steps
 * calc_xtal.bin - 5120 steps
-* calc_ir.bin - 1792 steps
+* calc_ir.bin - 1536 steps
 This, with ENTRY_RPN:
 * calc.bin - 6656 steps
 * calc_xtal.bin - 5120 steps
 * calc_ir.bin - 1536 steps
 
 Changes:
+Release 3905:
+* Bug fixed with the operation of entry_rpn. Pressing return with no number in the command line leaves
+stack lift enabled, so that (for example) 0 Fill 2 ENTER ENTER 50 x x returns 200, not zero.
+* Instructions included on how to set the calculator to be invoked when you press the Windows calculator
+key - see file calckey_readme.txt in branches\complex_mode\windows\bin for instructions (also present in
+trunk\windows\bin).
+* Options added to features.h:
+	* YREG_ON_BY_DEFAULT does what it says - a less extreme version of YREG_ALWAYS_ON.
+	* DEFAULT_TO_SSIZE8 also does what it says.
+	* DEFINE_DATE_YMD and DEFINE_DATE_DMY choose the initial date mode - there are issues with the 
+	existing code for setting defaults.
+	* REVERSE_ARROW makes angular conversions easier. Pressing the conversion arrow twice before
+	a conversion reverses its direction, converting _into_ the current angular mode.
+* Different features.h files added to the distribution:
+	* features_standard.h: complex mode, no entry RPN.
+	* features_standard_entryRPN.h: complex mode, entry RPN
+	* features_nd.h: nd's working features file (will disappear from repository eventually)
+	* features_JM.h: JM's working features file (will disappear from repository eventually)
+To use these, copy them to features.h and compile in the usual way. features.h is initially a copy
+of features_standard.h .
+
 Release 3904:
 * Bug fixed with how complex_enter handles stack lift - this caused entry_rpn to fail to work correctly.
 * Matrix operations disabled to increase available flash memory for programs

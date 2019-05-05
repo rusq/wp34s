@@ -158,13 +158,13 @@
 // Values:  0 or undefined:  feature disabled
 //          1:               feature enabled if user flag L is set
 //          2:               feature always enabled
-//#define INCLUDE_EEX_PI 2
+#define INCLUDE_EEX_PI 2
 
 // Change the fraction separator to the old Casio form _|
-//#define INCLUDE_CASIO_SEPARATOR
+#define INCLUDE_CASIO_SEPARATOR
 
 // Group digits when viewing the full X register.
-#define FULL_NUMBER_GROUPING
+//#define FULL_NUMBER_GROUPING
 
 // When viewing the full X register, don't group digits if thousands separator is turned off (only applies if FULL_NUMBER_GROUPING is enabled).
 //#define FULL_NUMBER_GROUPING_TS
@@ -187,10 +187,10 @@
 //        The following only applies if INCLUDE_DOUBLEDOT_FRACTIONS is enabled:
 //          4:        mixed/proper fractions (a.b.c) enable proper fractions
 //          5:        simple/improper fractions (a..b) enable improper fractions
-#define FRACTION_MODE_INPUT 0
+#define FRACTION_MODE_INPUT 62
 
 // Make two successive decimals a..b enter an improper fraction a/b, not a 0/b (also enables PRETTY_FRACTION_ENTRY)
-//#define INCLUDE_DOUBLEDOT_FRACTIONS
+#define INCLUDE_DOUBLEDOT_FRACTIONS
 
 // Ignore invalid fraction entry instead of treating it as an error.
 // If the denominator is missing or is zero, only the integer part will
@@ -205,10 +205,10 @@
 //          1:               large exponents always displayed
 //          2:               large exponents displayed if flag L is set
 //          3:               large exponents displayed if flag L is cleared
-//#define SHOW_LARGE_EXPONENT 1
+#define SHOW_LARGE_EXPONENT 1
 
 // Allow entering four-digit exponents in double precision mode
-//#define LARGE_EXPONENT_ENTRY
+#define LARGE_EXPONENT_ENTRY
 
 // Rules about negative exponents in single precision mode with flag D cleared
 // Values: -1: Use value from register 0 (for debugging only!)
@@ -222,7 +222,7 @@
 //          7: Allow denormal numbers if at least one digit can be stored, without limit
 //          8: Allow denormal numbers if at least one digit can be stored, with low limit
 //          9: Allow denormal numbers if at least one digit can be stored, with high limit
-#define SP_NEG_EXP_ENTRY_TYPE_DC 0
+#define SP_NEG_EXP_ENTRY_TYPE_DC 1
 // Absolute value of negative exponent limit in single precision mode with flag D cleared
 // -1: Use value from register 1 (for debugging only!)
 #define SP_NEG_EXP_ENTRY_LIMIT_DC 383
@@ -230,7 +230,7 @@
 // Rules about negative exponents in single precision mode with flag D set
 // Values: -1: Use value from register 2 (for debugging only!)
 //         Other values same as above.
-#define SP_NEG_EXP_ENTRY_TYPE_DS 0
+#define SP_NEG_EXP_ENTRY_TYPE_DS 7
 // Absolute value of negative exponent limit in single precision mode with flag D set
 // -1: Use value from register 3 (for debugging only!)
 #define SP_NEG_EXP_ENTRY_LIMIT_DS 383
@@ -240,12 +240,12 @@
 //          0: Treat a zero as if it was a number with one significant digit
 //          1: Allow any exponent (within the above specified limits if any)
 //          2: Allow any exponent (ignore any limit specified above)
-#define SP_EXP_ENTRY_ZERO_DC 0
+#define SP_EXP_ENTRY_ZERO_DC 2
 
 // Rules about exponents when the mantissa is zero in single precision mode with flag D set
 // Values: -1: Use value from flag 3 (MSB) and 2 (for debugging only!)
 //         Other values same as above.
-#define SP_EXP_ENTRY_ZERO_DS 0
+#define SP_EXP_ENTRY_ZERO_DS 2
 
 // Rules about positive exponents in single precision mode with flag D cleared
 // Values: -1: Use value from register 4 (for debugging only!)
@@ -253,7 +253,7 @@
 //          1: Don't allow numbers that overflow to infinity, without limit
 //          2: Don't allow numbers that overflow to infinity, with low limit
 //          3: Don't allow numbers that overflow to infinity, with high limit
-#define SP_POS_EXP_ENTRY_TYPE_DC 0
+#define SP_POS_EXP_ENTRY_TYPE_DC 1
 // Positive exponent limit in single precision mode with flag D cleared
 // -1: Use value from register 5 (for debugging only!)
 #define SP_POS_EXP_ENTRY_LIMIT_DC 384
@@ -261,7 +261,7 @@
 // Rules about positive exponents in single precision mode with flag D set
 // Values: -1: Use value from register 6 (for debugging only!)
 //         Other values same as above.
-#define SP_POS_EXP_ENTRY_TYPE_DS 0
+#define SP_POS_EXP_ENTRY_TYPE_DS 1
 // Positive exponent limit in single precision mode with flag D set
 // -1: Use value from register 7 (for debugging only!)
 #define SP_POS_EXP_ENTRY_LIMIT_DS 384
@@ -272,7 +272,7 @@
 //          1: Changing the sign is not allowed if it would result in an illegal exponent
 //          2: Changing the sign is always allowed
 //          3: Extend the range of allowed exponents so changing the sign is always legal
-#define SP_EXP_ENTRY_CHS_DC 2
+#define SP_EXP_ENTRY_CHS_DC 1
 
 // How to handle changing the sign of exponents in single precision mode with flag D set
 // Values: -1: Use value from register 9 (for debugging only!)
@@ -283,24 +283,24 @@
 // Only applies if LARGE_EXPONENT_ENTRY is enabled,
 // without it the -999..999 range is unconditionally allowed.
 // Values are the same as above, except -1 isn't available for debugging.
-#define DP_NEG_EXP_ENTRY_TYPE_DC 0
+#define DP_NEG_EXP_ENTRY_TYPE_DC 1
 #define DP_NEG_EXP_ENTRY_LIMIT_DC 6143
-#define DP_NEG_EXP_ENTRY_TYPE_DS 0
+#define DP_NEG_EXP_ENTRY_TYPE_DS 7
 #define DP_NEG_EXP_ENTRY_LIMIT_DS 6143
 
-#define DP_EXP_ENTRY_ZERO_DC 0
-#define DP_EXP_ENTRY_ZERO_DS 0
+#define DP_EXP_ENTRY_ZERO_DC 2
+#define DP_EXP_ENTRY_ZERO_DS 2
 
-#define DP_POS_EXP_ENTRY_TYPE_DC 0
+#define DP_POS_EXP_ENTRY_TYPE_DC 1
 #define DP_POS_EXP_ENTRY_LIMIT_DC 6144
-#define DP_POS_EXP_ENTRY_TYPE_DS 0
+#define DP_POS_EXP_ENTRY_TYPE_DS 1
 #define DP_POS_EXP_ENTRY_LIMIT_DS 6144
 
-#define DP_EXP_ENTRY_CHS_DC 2
+#define DP_EXP_ENTRY_CHS_DC 1
 #define DP_EXP_ENTRY_CHS_DS 2
 
 // Shift exponent on illegal entry instead of showing a warning
-#define SHIFT_EXPONENT
+//#define SHIFT_EXPONENT
 
 // Pad exponents with spaces instead of zeros
 //#define PAD_EXPONENTS_WITH_SPACES
@@ -314,7 +314,7 @@
 //#define WARNINGS_IN_UPPER_LINE_ONLY
 
 // Chamge ALL display mode to limited significant figures mode
-//#define INCLUDE_SIGFIG_MODE
+#define INCLUDE_SIGFIG_MODE
 
 // Enable Y-register display (not just for complex results)
 #define INCLUDE_YREG_CODE
@@ -359,7 +359,7 @@
 //#define SHOW_COMPLEX_REGS
 
 // Right-justify seven-segment exponent (007 or "  7" rather than "7  ")
-//#define INCLUDE_RIGHT_EXP
+#define INCLUDE_RIGHT_EXP
 
 // Rectangular - Polar y-reg prefix change:
 #define RP_PREFIX
@@ -372,7 +372,7 @@
 //#define MODIFY_K62_E3_SWITCH
 
 // Indicate four-level stack by a '.' and eight-level stack by a ':'
-//#define SHOW_STACK_SIZE
+#define SHOW_STACK_SIZE
 
 // BEG annunciators indicates BIG stack size rather than beginning of program
 //#define MODIFY_BEG_SSIZE8
@@ -385,7 +385,7 @@
  * See enum date_modes for values of
  *	DATE_DMY=0,	DATE_YMD=1,	DATE_MDY=2
 */
-#define DEFAULT_DATEMODE 0
+//#define DEFAULT_DATEMODE 0
 
 /* This setting supresses the date mode display entirely if enabled.
  */

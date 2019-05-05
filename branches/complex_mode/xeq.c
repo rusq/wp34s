@@ -3929,7 +3929,9 @@ static void specials(const opcode op) {
 		} else {                       //JM
 			process_cmdline();
 			lift();
-			clr_lift();
+			if ( (XromRunning || Running) ) {//JMTEST Explicitly including standard functionality if code is running
+				clr_lift();
+			}   
 		}                              //JM
 #else
 		process_cmdline();

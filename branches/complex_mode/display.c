@@ -709,7 +709,15 @@ static void annunciators(void) {
 		}
 		if (State2.arrow) {
 			*p++ = ' ';
+
+#ifdef REVERSE_ARROW 							//JM4
+			if (State2.dot) 					//JM4
+				*p = '\016'; // reversed arrow 	//JM4
+			else 								//JM4
+				*p = '\015'; 					//JM4
+#else 											//JM4
 			*p = '\015';
+#endif 											//JM4
 			goto skip;
 		}
 

@@ -48,7 +48,7 @@
 //#define INTERRUPT_XROM_TICKS 10
 
 // Include the pixel plotting commands
-// #define INCLUDE_PLOTTING
+#define INCLUDE_PLOTTING
 
 // Build a tiny version of the device
 // #define TINY_BUILD
@@ -112,7 +112,7 @@
 // #define INCLUDE_MULADD
 
 // Include a date function to determine the date of Easter in a given year
-// #define INCLUDE_EASTER
+#define INCLUDE_EASTER //JM
 
 // Include code to use a Ridder's method step after a bisection in the solver.
 // For some functions this seems to help a lot, for others there is limited
@@ -121,7 +121,7 @@
 
 // Include code to find integer factors
 // Space cost 480 bytes.
-// #define INCLUDE_FACTOR
+#define INCLUDE_FACTOR  //JM
 
 // Include matrix functions better implemented in user code
 // #define SILLY_MATRIX_SUPPORT
@@ -158,7 +158,7 @@
 // Values:  0 or undefined:  feature disabled
 //          1:               feature enabled if user flag L is set
 //          2:               feature always enabled
-//#define INCLUDE_EEX_PI 2
+#define INCLUDE_EEX_PI 2  //JM
 
 // Change the fraction separator to the old Casio form _|
 //#define INCLUDE_CASIO_SEPARATOR
@@ -190,7 +190,7 @@
 #define FRACTION_MODE_INPUT 0
 
 // Make two successive decimals a..b enter an improper fraction a/b, not a 0/b (also enables PRETTY_FRACTION_ENTRY)
-//#define INCLUDE_DOUBLEDOT_FRACTIONS
+#define INCLUDE_DOUBLEDOT_FRACTIONS   //JM
 
 // Ignore invalid fraction entry instead of treating it as an error.
 // If the denominator is missing or is zero, only the integer part will
@@ -311,10 +311,10 @@
 
 // Show warnings (bad digit, too long entry, too big or small number) in the
 // upper line only so the number being entered is never hidden.
-//#define WARNINGS_IN_UPPER_LINE_ONLY
+#define WARNINGS_IN_UPPER_LINE_ONLY  //JM
 
 // Chamge ALL display mode to limited significant figures mode
-//#define INCLUDE_SIGFIG_MODE
+#define INCLUDE_SIGFIG_MODE  //JM
 
 // Enable Y-register display (not just for complex results)
 #define INCLUDE_YREG_CODE
@@ -325,19 +325,19 @@
 //Various complex lock mode defaults
 
 #define DEFAULT_TO_SSIZE8 //Fix default to 8 deep stack, to allow seamless back and forth to Complex mode without losing stack content. Also see keys.c //JM3
-//#define DEFAULT_TO_J // Still possible to change between I and J if this is selected
+#define DEFAULT_TO_J // Still possible to change between I and J if this is selected //JM3
 //#define DEFAULT_TO_C_LOCK // Complex Lock mode on by default
-#define DEFAULT_TO_CPX_YES // No need to XEQ CPXYES to turn on complex lock 
+#define DEFAULT_TO_CPX_YES // No need to XEQ CPXYES to turn on complex lock  //JM3
 
 // Enable Entry RPN (pressing Enter doesn't duplicate the x-register)
-// #define ENTRY_RPN
+#define ENTRY_RPN   //JM
 
 // Y register is always displayed (cannot be turned off)
-//#define YREG_ALWAYS_ON
+#define YREG_ALWAYS_ON  //JM
 
 #if !defined(YREG_ALWAYS_ON)
 // Y register on by default (can be turned off)
-#define YREG_ON_BY_DEFAULT
+//#define YREG_ON_BY_DEFAULT
 #endif
 
 // Temporarily disable y-register display when a shift key or the CPX key is pressed 
@@ -385,18 +385,18 @@
  * See enum date_modes for values of
  *	DATE_DMY=0,	DATE_YMD=1,	DATE_MDY=2
 */
-#define DEFAULT_DATEMODE 0
+//#define DEFAULT_DATEMODE 1
 
 /* This setting supresses the date mode display entirely if enabled.
  */
 //#define NO_DATEMODE_INDICATION
 
 
-//#define DEFAULT_DATE_YMD  //initialise UState.date_mode properly. No setting means DMY.
-//#define DEFAULT_DATE_MDY  //initialise UState.date_mode properly. No setting means DMY.
+#define DEFAULT_DATE_YMD  //initialise UState.date_mode properly. No setting means DMY.		//JM5
+//#define DEFAULT_DATE_MDY  //initialise UState.date_mode properly. No setting means DMY. 	//JM5
 
 
-//#define REVERSE_ARROW
+#define REVERSE_ARROW 								//JM4
 // This is BIT's method, added from his repository, by JM
 //Reverse angular conversions (345 only)
 //The conversion arrow can be reversed by pressing it again, and the reversed arrow

@@ -13,11 +13,11 @@ if "%1" == "X" goto exit
 
 rem touch features.h
 make REALBUILD=1 XTAL=1 all >> flash-build.log 2>&1
-if errorlevel 1 goto exit
+if errorlevel 1 echo Crystal build error
 
 rem touch features.h
 make REALBUILD=1 XTAL=1 INFRARED=1 all >> flash-build.log 2>&1
-if errorlevel 1 goto exit
+if errorlevel 1 echo IR build error
 endlocal
 
 call makelib.cmd
