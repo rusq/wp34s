@@ -587,11 +587,14 @@ static void cmplxGamma_LnGamma(decNumber *rx, decNumber *ry, const decNumber *xi
 			return;
 		}
 		dn_m1(&x, &t1);
-	} else
+		dn_minus(&t2, y);
+	} else {
 		dn_m1(&x, xin);
+        	decNumberCopy(&t2, y);
+	}
 
 	// Sum the series
-	c_lg(rx, ry, &x, y);
+	c_lg(rx, ry, &x, &t2);
 	if (!ln)
 		cmplxExp(rx, ry, rx, ry);
 
@@ -599,7 +602,7 @@ static void cmplxGamma_LnGamma(decNumber *rx, decNumber *ry, const decNumber *xi
 	if (reflec) {
 		cmplxMultiplyReal(&t1, &t2, xin, y, &const_PI);
 		cmplxSin(&s1, &s2, &t1, &t2);
-		if (ln) {
+		if (!ln) {
 			cmplxMultiply(&u1, &u2, &s1, &s2, rx, ry);
 			cmplxDivideRealBy(rx, ry, &const_PI, &u1, &u2);
 		} else {
