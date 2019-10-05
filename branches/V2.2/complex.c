@@ -972,10 +972,13 @@ void cmplxLnGamma(decNumber *rx, decNumber *ry, const decNumber *xin, const decN
 			return;
 		}
 		dn_m1(&x, &t1);
-	} else
+		dn_minus(&t2, y);
+	} else {
 		dn_m1(&x, xin);
+        	decNumberCopy(&t2, y);
+	}
 
-	c_lg(rx, ry, &x, y);
+	c_lg(rx, ry, &x, &t2);
 
 	// Finally invert if we started with a negative argument
 	if (reflec) {
