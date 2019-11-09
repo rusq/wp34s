@@ -283,7 +283,7 @@ int isPrime(unsigned long long int p) {
 
 	/* We fail for numbers >= 2^63 */
 	if ((p & 0x8000000000000000ull) != 0) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 1;
 	}
 

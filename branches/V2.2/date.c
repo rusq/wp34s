@@ -450,7 +450,7 @@ void date_alphaday(decimal64 *nul1, decimal64 *nul2, enum nilop op) {
 
 	getX(&x);
 	if (decNumberIsSpecial(&x) || extract_date(&x, &y, &m, &d))
-		err(ERR_BAD_DATE);
+		report_err(ERR_BAD_DATE);
 	else {
 		dow = day_of_week(y, m, d, NULL);
 		copy3("MONTUEWEDTHUFRISATSUN" + 3*(dow-1));
@@ -464,7 +464,7 @@ void date_alphamonth(decimal64 *nul1, decimal64 *nul2, enum nilop op) {
 
 	getX(&x);
 	if (decNumberIsSpecial(&x) || extract_date(&x, &y, &m, &d))
-		err(ERR_BAD_DATE);
+		report_err(ERR_BAD_DATE);
 	else {
 		copy3(mons + 3*m - 3);
 	}
@@ -551,7 +551,7 @@ void date_alphadate(decimal64 *nul1, decimal64 *nul2, enum nilop op) {
 	getX(&x);
 	xset(buf, '\0', sizeof(buf));
 	if (extract_date(&x, &y, &m, &d)) {
-		err(ERR_BAD_DATE);
+		report_err(ERR_BAD_DATE);
 		return;
 	}
 	switch (UState.date_mode) {
@@ -689,7 +689,7 @@ void date_setdate(decimal64 *r, decimal64 *nul, enum nilop op) {
 
 	getX(&x);
 	if (extract_date(&x, &y, &m, &d)) {
-		err(ERR_BAD_DATE);
+		report_err(ERR_BAD_DATE);
 		return;
 	}
 	dow = day_of_week(y, m, d, NULL);

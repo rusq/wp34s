@@ -20,7 +20,7 @@
 
 static int check_intmode(void) {
 	if (! is_intmode())
-		return err(ERR_BAD_MODE);
+		return report_err(ERR_BAD_MODE);
 	return 0;
 }
 
@@ -342,11 +342,11 @@ long long int intMultiply(long long int y, long long int x) {
 #ifndef TINY_BUILD
 static void err_div0(unsigned long long int num, int sn, int sd) {
 	if (num == 0)
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 	else if (sn == sd)
-		err(ERR_INFINITY);
+		report_err(ERR_INFINITY);
 	else
-		err(ERR_MINFINITY);
+		report_err(ERR_MINFINITY);
 }
 #endif
 
@@ -1031,7 +1031,7 @@ long long int intSqrt(long long int x) {
 	unsigned long long int n0, n1;
 
 	if (sx) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 0;
 	}
 	if (v == 0)
@@ -1083,7 +1083,7 @@ long long int intPower(long long int y, long long int x) {
 	unsigned long long int vy = extract_value(y, &sy);
 
 	if (vx == 0 && vy == 0) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 0;
 	}
 	set_carry(0);
@@ -1121,7 +1121,7 @@ long long int intLog2(long long int x) {
 	unsigned int r = 0;
 
 	if (v == 0 || sx) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 0;
 	}
 	set_carry((v & (v-1))?1:0);
@@ -1174,7 +1174,7 @@ long long int intLog10(long long int x) {
 	int c = 0;
 
 	if (v == 0 || sx) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 0;
 	}
 	while (v >= 10) {
@@ -1435,7 +1435,7 @@ int isPrime(unsigned long long int p) {
 
 	/* We fail for numbers >= 2^63 */
 	if ((p & 0x8000000000000000ull) != 0) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 1;
 	}
 
@@ -1475,7 +1475,7 @@ long long int intmodop(long long int z, long long int y, long long int x) {
 	unsigned long long int r;
 
 	if (sx || sy || sz || vx <= 1)
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 	if (XeqOpCode == (OP_TRI | OP_MULMOD))
 		r = mulmod(vz, vy, vx);
 	else

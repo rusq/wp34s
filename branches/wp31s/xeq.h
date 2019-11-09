@@ -1298,7 +1298,7 @@ extern int is_key_pressed(void);
 extern enum shifts shift_down(void);
 extern int get_key(void);
 extern int put_key(int k);
-extern void shutdown(void);
+extern void shutdown_calc(void);
 #ifdef REALBUILD
 extern void lock(void);
 extern void unlock(void);

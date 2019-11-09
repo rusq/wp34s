@@ -215,7 +215,7 @@ static int param_verify(decNumber *r, const decNumber *n, int zero, int intg) {
 			(!zero && dn_eq0(n)) ||
 			(intg && !is_int(n))) {
 		decNumberZero(r);
-		err(ERR_BAD_PARAM);
+		report_err(ERR_BAD_PARAM);
 		return 1;
 	}
 	return 0;
@@ -229,7 +229,7 @@ static int param_verify(decNumber *r, const decNumber *n, int zero, int intg) {
 static int param_range01(decNumber *r, const decNumber *p) {
 	if (decNumberIsSpecial(p) || dn_lt0(p) || dn_gt(p, &const_1)) {
 		decNumberZero(r);
-		err(ERR_BAD_PARAM);
+		report_err(ERR_BAD_PARAM);
 		return 1;
 	}
 	return 0;

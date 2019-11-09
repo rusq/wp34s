@@ -336,11 +336,11 @@ long long int intMultiply(long long int y, long long int x) {
 #ifndef TINY_BUILD
 static void err_div0(unsigned long long int num, int sn, int sd) {
 	if (num == 0)
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 	else if (sn == sd)
-		err(ERR_INFINITY);
+		report_err(ERR_INFINITY);
 	else
-		err(ERR_MINFINITY);
+		report_err(ERR_MINFINITY);
 }
 #endif
 
@@ -982,7 +982,7 @@ void introt(unsigned int arg, enum rarg op) {
 	unsigned int i;
 	
 	if (!is_intmode()) {
-		err(ERR_BAD_MODE);
+		report_err(ERR_BAD_MODE);
 		return;
 	}
 	ws = word_size();
@@ -1048,7 +1048,7 @@ long long int intSqrt(long long int x) {
 	unsigned long long int n0, n1;
 
 	if (sx) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 0;
 	}
 	if (v == 0)
@@ -1117,7 +1117,7 @@ long long int intPower(long long int y, long long int x) {
 	unsigned int ws, i;
 
 	if (vx == 0 && vy == 0) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 0;
 	}
 	set_carry(0);
@@ -1162,7 +1162,7 @@ long long int intLog2(long long int x) {
 	unsigned int r = 0;
 
 	if (v == 0 || sx) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 0;
 	}
 	set_carry((v & (v-1))?1:0);
@@ -1215,7 +1215,7 @@ long long int intLog10(long long int x) {
 	int c = 0;
 
 	if (v == 0 || sx) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 0;
 	}
 	while (v >= 10) {
@@ -1354,7 +1354,7 @@ void intbits(unsigned int arg, enum rarg op) {
 #ifndef TINY_BUILD
 	long long int m, x;
 	if (!is_intmode()) {
-		err(ERR_BAD_MODE);
+		report_err(ERR_BAD_MODE);
 		return;
 	}
 	m =  (arg >= word_size())?0:(1LL << arg);
@@ -1474,7 +1474,7 @@ int isPrime(unsigned long long int p) {
 
 	/* We fail for numbers >= 2^63 */
 	if ((p & 0x8000000000000000ull) != 0) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 1;
 	}
 

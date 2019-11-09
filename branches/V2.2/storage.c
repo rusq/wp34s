@@ -237,7 +237,7 @@ void flash_backup( decimal64 *nul1, decimal64 *nul2, enum nilop op )
 	checksum_all();
 
 	if ( program_flash( PAGE_BACKUP, &PersistentRam, SIZE_BACKUP * PAGE_SIZE ) ) {
-		err( ERR_IO );
+		report_err( ERR_IO );
 		DispMsg = "Error";
 	}
 	else {
@@ -249,7 +249,7 @@ void flash_backup( decimal64 *nul1, decimal64 *nul2, enum nilop op )
 void flash_restore(decimal64 *nul1, decimal64 *nul2, enum nilop op)
 {
 	if ( checksum_backup() ) {
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 		// DispMsg = "Invalid";
 	}
 	else {
@@ -301,11 +301,11 @@ static int internal_save_program( unsigned int r, FLASH_REGION *fr )
 {
 	program_cleanup();
 	if ( check_return_stack_segment( r ) ) {
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 		return 1;
 	}
 	if ( write_region( r, (FLASH_REGION *) fr ) ) {
-		err( ERR_IO );
+		report_err( ERR_IO );
                 return 1;
 	}
         return 0;
@@ -337,7 +337,7 @@ static int internal_load_program( unsigned int r )
 		/*
 		 *  Not a valid program region
 		 */
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 		return 1;
 	}
 	clrprog();
@@ -380,7 +380,7 @@ void swap_program( unsigned int r, enum rarg op )
 	 *  Load program from flash
 	 */
 	if ( internal_load_program( r ) ) {
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 	}
 
 	/*
@@ -405,7 +405,7 @@ void load_registers(decimal64 *nul1, decimal64 *nul2, enum nilop op)
 		/*
 		 *  Not a valid backup region
 		 */
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 		return;
 	}
 	xcopy( Regs, UserFlash.backup._regs, sizeof( Regs ) );
@@ -418,7 +418,7 @@ void load_state(decimal64 *nul1, decimal64 *nul2, enum nilop op)
 		/*
 		 *  Not a valid backup region
 		 */
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 		return;
 	}
 	xcopy( &RandS1, &UserFlash.backup._rand_s1, (char *) &Crc - (char *) &RandS1 );

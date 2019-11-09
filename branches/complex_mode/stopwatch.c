@@ -496,7 +496,7 @@ void stopwatch(enum nilop op) {
 #ifndef REALBUILD
 	// Should never happen
 	if (Running) {
-		err(ERR_ILLEGAL);
+		report_err(ERR_ILLEGAL);
 		return;
 	}
 #endif

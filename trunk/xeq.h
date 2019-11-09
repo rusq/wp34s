@@ -1114,8 +1114,8 @@ enum shifts {
 /*
  *  Function prototypes
  */
-extern int err(const unsigned int);
-extern int warn(const unsigned int);
+extern int report_err(const unsigned int);
+extern int report_warn(const unsigned int);
 extern void bad_mode_error(void);
 extern void prettify(const char *in, char *out, int no_brackets);
 extern int num_arg_digits(int);
@@ -1435,7 +1435,7 @@ extern int is_key_pressed(void);
 extern enum shifts shift_down(void);
 extern int get_key(void);
 extern int put_key(int k);
-extern void shutdown(void);
+extern void shutdown_calc(void);
 #ifdef REALBUILD
 extern void lock(void);
 extern void unlock(void);

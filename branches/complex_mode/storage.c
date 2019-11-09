@@ -347,10 +347,10 @@ int append_program( const s_opcode *source, int length )
 		--ProgSize;
 	}
 	if ( length > NUMPROG_LIMIT ) {
-		return err( ERR_INVALID );
+		return report_err( ERR_INVALID );
 	}
 	if ( length > NUMPROG_LIMIT - ProgSize ) {
-		return err( ERR_RAM_FULL );
+		return report_err( ERR_RAM_FULL );
 	}
 
 	/*
@@ -369,7 +369,7 @@ int append_program( const s_opcode *source, int length )
 			regs = NumRegs - ( ( space_needed + 3 ) >> 2 );
 
 		if ( regs < 0 ) {
-			return err( ERR_RAM_FULL );
+			return report_err( ERR_RAM_FULL );
 		}
 		cmdregs( regs, RARG_REGS );
 	}
@@ -432,7 +432,7 @@ static int program_flash( void *destination, void *source, int count )
 		 *  Command the controller to erase and write the page.
 		 */
 		if ( flash_command( cmd ) ) {
-			err( ERR_IO );
+			report_err( ERR_IO );
 			break;
 		}
 	}
@@ -497,7 +497,7 @@ static int program_flash( void *destination, void *source, int count )
 	}
 	else {
 		// Bad address
-		err( ERR_ILLEGAL );
+		report_err( ERR_ILLEGAL );
 		return 1;
 	}
 	f = fopen( name, "rb+" );
@@ -505,13 +505,13 @@ static int program_flash( void *destination, void *source, int count )
 		f = fopen( name, "wb+" );
 	}
 	if ( f == NULL ) {
-		err( ERR_IO );
+		report_err( ERR_IO );
 		return 1;
 	}
 	fseek( f, offset, SEEK_SET );
 	if ( count != fwrite( dest, PAGE_SIZE, count, f ) ) {
 		fclose( f );
-		err( ERR_IO );
+		report_err( ERR_IO );
 		return 1;
 	}
 	fclose( f );
@@ -618,7 +618,7 @@ void flash_backup( enum nilop op )
 		checksum_all();
 
 		if ( program_flash( &BackupFlash, &PersistentRam, sizeof( BackupFlash ) / PAGE_SIZE ) ) {
-			err( ERR_IO );
+			report_err( ERR_IO );
 			DispMsg = "Error";
 		}
 		else {
@@ -632,7 +632,7 @@ void flash_restore( enum nilop op )
 {
 	if ( not_running() ) {
 		if ( checksum_backup() ) {
-			err( ERR_INVALID );
+			report_err( ERR_INVALID );
 		}
 		else {
 			xcopy( &PersistentRam, &BackupFlash, sizeof( PersistentRam ) );
@@ -654,7 +654,7 @@ void load_program( enum nilop op )
 			/*
 			 *  Not a valid backup
 			 */
-			err( ERR_INVALID );
+			report_err( ERR_INVALID );
 			return;
 		}
 		clpall();
@@ -673,7 +673,7 @@ void load_registers( enum nilop op )
 		/*
 		 *  Not a valid backup region
 		 */
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 		return;
 	}
 	count = NumRegs;
@@ -697,14 +697,14 @@ void load_sigma( enum nilop op )
 		/*
 		 *  Not a valid backup region
 		 */
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 		return;
 	}
 	if ( ! BackupFlash._state.have_stats ) {
 		/*
 		 *  Backup has no data
 		 */
-		err( ERR_MORE_POINTS );
+		report_err( ERR_MORE_POINTS );
 		return;
 	}
 	sigmaCopy( ( (char *)( BackupFlash._regs + TOPREALREG - BackupFlash._numregs ) - sizeof( STAT_DATA ) ) );
@@ -721,7 +721,7 @@ void load_state( enum nilop op )
 			/*
 			 *  Not a valid backup region
 			 */
-			err( ERR_INVALID );
+			report_err( ERR_INVALID );
 			return;
 		}
 		xcopy( &RandS1, &BackupFlash._rand_s1, (char *) &Crc - (char *) &RandS1 );
@@ -746,7 +746,7 @@ void store_program( enum nilop op )
 		 */
 		pc = nLIB( state_pc() );
 		if ( pc == REGION_LIBRARY || pc == REGION_XROM ) {
-			err( ERR_ILLEGAL );
+			report_err( ERR_ILLEGAL );
 			return;
 		}
 		/*
@@ -755,7 +755,7 @@ void store_program( enum nilop op )
 		update_program_bounds( 1 );
 		lbl = getprog( ProgBegin );
 		if ( !isDBL(lbl) || opDBL(lbl) != DBL_LBL ) {
-			err( ERR_NO_LBL );
+			report_err( ERR_NO_LBL );
 			return;
 		}
 		/*
@@ -781,7 +781,7 @@ void store_program( enum nilop op )
 			set_pc( old_pc );
 		}
 		if ( space_needed > free ) {
-			err( ERR_FLASH_FULL );
+			report_err( ERR_FLASH_FULL );
 			return;
 		}
 		// 3. Append program

@@ -38,7 +38,7 @@ static int matrix_range_check(int base, int rows, int cols) {
 	int s;
 
 	if (is_intmode() || is_dblmode()) {
-		err(ERR_BAD_MODE);
+		report_err(ERR_BAD_MODE);
 		return 0;
 	}
 	if (base >= LOCAL_REG_BASE && LocalRegs < 0) {
@@ -47,7 +47,7 @@ static int matrix_range_check(int base, int rows, int cols) {
 	}
 	s = rows * cols;
 	if (base < 0 || base + s > limit || s > MAX_DIMENSION) {
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 		return 0;
 	}
 	return 1;
@@ -92,7 +92,7 @@ static int matrix_decompose(const decNumber *x, int *rows, int *cols, int *up) {
 	if (! matrix_range_check(base, r, c))
 		return -1;
 	if (c == 0) {
-		err(ERR_BAD_PARAM);
+		report_err(ERR_BAD_PARAM);
 		return -1;
 	}
 	if (rows)	*rows = r;
@@ -139,7 +139,7 @@ void matrix_create(enum nilop op) {
 
 		if (op == OP_MAT_IDENT) {
 			if (r != c) {
-				err(ERR_MATRIX_DIM);
+				report_err(ERR_MATRIX_DIM);
 				return;
 			}
 			diag = get_const(OP_ONE, 0)->s;
@@ -213,7 +213,7 @@ decNumber *matrix_row(decNumber *r, const decNumber *y, const decNumber *x) {
 		return NULL;
 	n = dn_to_int(y) - 1;
 	if (n < 0 || n >= rows) {
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 		return NULL;
 	}
 	base += n*cols;
@@ -228,7 +228,7 @@ decNumber *matrix_col(decNumber *r, const decNumber *y, const decNumber *x) {
 		return NULL;
 	n = dn_to_int(y) - 1;
 	if (n < 0 || n >= cols) {
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 		return NULL;
 	}
 	base += n;
@@ -262,7 +262,7 @@ decNumber *matrix_getreg(decNumber *r, const decNumber *cdn, const decNumber *rd
 	ri = dn_to_int(rdn) - 1;
 	ci = dn_to_int(cdn) - 1;
 	if (ri < 0 || ci < 0 || ri >= h || ci >= w) {
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 		return NULL;
 	}
 	n += matrix_idx(ri, ci, w);
@@ -281,7 +281,7 @@ decNumber *matrix_getrc(decNumber *res, const decNumber *m) {
 	pos = dn_to_int(&ydn);
 	pos -= n;
 	if (pos < 0 || pos >= rows*cols) {
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 		return NULL;
 	}
 	c = pos % cols + 1;
@@ -303,7 +303,7 @@ decNumber *matrix_genadd(decNumber *r, const decNumber *k, const decNumber *b, c
 	if (abase == NULL || bbase == NULL)
 		return NULL;
 	if (arows != brows || acols != bcols) {
-		err(ERR_MATRIX_DIM);
+		report_err(ERR_MATRIX_DIM);
 		return NULL;
 	}
 	for (i=0; i<arows*acols; i++) {
@@ -331,7 +331,7 @@ decNumber *matrix_multiply(decNumber *r, const decNumber *a, const decNumber *b,
 	if (abase == NULL || bbase == NULL)
 		return NULL;
 	if (acols != brows) {
-		err(ERR_MATRIX_DIM);
+		report_err(ERR_MATRIX_DIM);
 		return NULL;
 	}
 	creg = dn_to_int(c);
@@ -402,7 +402,7 @@ void matrix_rowops(enum nilop op) {
 
 	i = dn_to_int(&ydn) - 1;
 	if (i < 0 || i >= rows) {
-badrow:		err(ERR_RANGE);
+badrow:		report_err(ERR_RANGE);
 		return;
 	}
 	r1 = base + i * cols;
@@ -574,7 +574,7 @@ static int matrix_lu_check(const decNumber *m, decimal128 *mat, decimal64 **mbas
 	if (base == NULL)
 		return 0;
 	if (rows != cols) {
-		err(ERR_MATRIX_DIM);
+		report_err(ERR_MATRIX_DIM);
 		return 0;
 	}
 	if (mat != NULL) {
@@ -630,7 +630,7 @@ void matrix_inverse(enum nilop op) {
 
 	i = LU_decomposition(mat, pivots, n);
 	if (i == 0) {
-		err(ERR_SINGULAR);
+		report_err(ERR_SINGULAR);
 		return;
 	}
 
@@ -661,7 +661,7 @@ decNumber *matrix_linear_eqn(decNumber *r, const decNumber *a, const decNumber *
 	if (bbase == NULL)
 		return NULL;
 	if (brows != n || bcols != 1) {
-		err(ERR_MATRIX_DIM);
+		report_err(ERR_MATRIX_DIM);
 		return NULL;
 	}
 
@@ -673,7 +673,7 @@ decNumber *matrix_linear_eqn(decNumber *r, const decNumber *a, const decNumber *
 	/* Everything is happy so far -- decompose */
 	i = LU_decomposition(mat, pivots, n);
 	if (i == 0) {
-		err(ERR_SINGULAR);
+		report_err(ERR_SINGULAR);
 		return NULL;
 	}
 
@@ -703,7 +703,7 @@ decNumber *matrix_lu_decomp(decNumber *r, const decNumber *m) {
 
 	sign = LU_decomposition(mat, pivots, n);
 	if (sign == 0) {
-		err(ERR_SINGULAR);
+		report_err(ERR_SINGULAR);
 		return NULL;
 	}
 

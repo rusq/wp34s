@@ -311,7 +311,7 @@ static void put_block( unsigned short tag, unsigned short length, const void *da
 		close_port_reset_state();
 	}
 	if ( ret ) {
-		err( ERR_IO );
+		report_err( ERR_IO );
 	}
 	else {
 		DispMsg = "OK";
@@ -337,7 +337,7 @@ void recv_any( enum nilop op )
 		 *  Only allowed as a direct command
 		 */
 		if ( accept_connection() ) {
-			err( ERR_IO );
+			report_err( ERR_IO );
 			return;
 		}
 		for ( i = 0; i < MAXCONNECT; ++i ) {
@@ -345,7 +345,7 @@ void recv_any( enum nilop op )
 			if ( c == STX ) break;
 		}
 		if ( c != STX ) {
-			err( ERR_IO );
+			report_err( ERR_IO );
 			return;
 		}
 
@@ -449,10 +449,10 @@ void recv_any( enum nilop op )
 		 *  Various error conditions
 		 */
 	invalid:
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 		goto nak;
 	err:
-		err( ERR_IO );
+		report_err( ERR_IO );
 	nak:
 		c = NAK;
 
@@ -549,7 +549,7 @@ void serial_open( enum nilop op )
 	 *  Set up the port
 	 */
 	if ( open_port( baud, bits, parity, stop ) ) {
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 		return;
 	}
 	serial_state( 1 );
@@ -572,7 +572,7 @@ void serial_close( enum nilop op )
 static int serial_open_default( void )
 {
 	if ( !SerialOn && open_port_default() ) {
-		err( ERR_IO );
+		report_err( ERR_IO );
 		return 1;
 	}
 	return 0;
@@ -630,7 +630,7 @@ void recv_alpha( enum nilop op )
 		}
 		Alpha[ i ] = '\0';
 		if ( c < 0 ) {
-			err( ERR_IO );
+			report_err( ERR_IO );
 		}
 	}
 }

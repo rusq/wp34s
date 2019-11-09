@@ -188,7 +188,7 @@ static void set_was_complex(void) {
 
 /* Produce an error and stop
  */
-void err(const enum errors e) {
+void report_err(const enum errors e) {
 	if (Error == ERR_NONE) {
 		Error = e;
 		error_message(e);
@@ -203,13 +203,13 @@ void err(const enum errors e) {
 
 /* Doing something in the wrong mode */
 static void bad_mode_error(void) {
-	err(ERR_BAD_MODE);
+	report_err(ERR_BAD_MODE);
 }
 
 
 /* User command to produce an error */
 void cmderr(unsigned int arg, enum rarg op) {
-	err((enum errors) arg);
+	report_err((enum errors) arg);
 }
 
 
@@ -279,11 +279,11 @@ static int check_special(const decNumber *x) {
 	if (decNumberIsSpecial(&y)) {
 		if (! get_user_flag(NAN_FLAG)) {
 			if (decNumberIsNaN(&y))
-				err(ERR_DOMAIN);
+				report_err(ERR_DOMAIN);
 			else if (decNumberIsNegative(&y))
-				err(ERR_MINFINITY);
+				report_err(ERR_MINFINITY);
 			else
-				err(ERR_INFINITY);
+				report_err(ERR_INFINITY);
 			return 1;
 		}
 	}
@@ -760,7 +760,7 @@ const char *get_cmdline(void) {
 
 static int fract_convert_number(decNumber *x, const char *s) {
 	if (*s == '\0') {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 1;
 	}
 	decNumberFromString(x, s, &Ctx);
@@ -813,7 +813,7 @@ void process_cmdline(void) {
 			if (fract_convert_number(&b, d2))
 				return;
 			if (dn_eq0(&b)) {
-				err(ERR_DOMAIN);
+				report_err(ERR_DOMAIN);
 				return;
 			}
 			if (fract_convert_number(&z, d0))	return;
@@ -823,7 +823,7 @@ void process_cmdline(void) {
 				dn_add(&x, &z, &t);
 			} else {
 				if (dn_eq0(&a)) {
-					err(ERR_DOMAIN);
+					report_err(ERR_DOMAIN);
 					return;
 				}
 				dn_divide(&x, &z, &a);
@@ -1528,7 +1528,7 @@ static int get_keycode_from_reg(unsigned int n)
 	int sgn;
 	const int c = row_column_to_keycode((int) reg_get_int((int) n, &sgn));
 	if ( c < 0 )
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 	return c;
 }
 
@@ -1593,7 +1593,7 @@ static int check_stack_overlap(unsigned int arg, int *nout) {
 		*nout = n;
 		return 1;
 	}
-	err(ERR_STK_CLASH);
+	report_err(ERR_STK_CLASH);
 	return 0;
 }
 
@@ -1692,7 +1692,7 @@ static unsigned int find_opcode_from(unsigned int pc, const opcode l, int quiet)
 		if (getprog(z) == l)
 			return z;
 	if (!quiet)
-		err(ERR_NO_LBL);
+		report_err(ERR_NO_LBL);
 	return 0;
 }
 
@@ -1710,7 +1710,7 @@ static void gsbgto(unsigned int pc, int gsb, unsigned int oldpc) {
 		if (Running) {
 			if (-RetStkPtr >= stack_size) {
 				// Stack is full
-				err(ERR_XEQ_NEST);
+				report_err(ERR_XEQ_NEST);
 				clrretstk(0);
 			}
 			else {
@@ -1786,7 +1786,7 @@ static unsigned int findmultilbl(const opcode o, int quiet) {
 	if (lbl == 0)
 		lbl = find_opcode_from(addrXROM(0), dest, 1);
 	if (lbl == 0 && ! quiet)
-		err(ERR_NO_LBL);
+		report_err(ERR_NO_LBL);
 	return lbl;
 }
 
@@ -1797,7 +1797,7 @@ void cmdmultilblp(const opcode o, enum multiops mopr) {
 static void do_multigto(int is_gsb, unsigned int lbl) {
 	if (!Running && isXROM(lbl) && ! is_gsb) {
 		lbl = 0;
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 	}
 
 	cmdgtocommon(is_gsb, lbl);
@@ -1969,7 +1969,7 @@ void fin_tst(const int a) {
 void cmdskip(unsigned int arg, enum rarg op) {
 	while (arg-- > 0 && !incpc());
 	if (PcWrapped) {
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 	}
 }
 
@@ -1986,7 +1986,7 @@ void cmdback(unsigned int arg, enum rarg op) {
 			pc = dec(pc);
 		} while (--arg && !PcWrapped);
 		if (PcWrapped)
-			err(ERR_RANGE);
+			report_err(ERR_RANGE);
 		else
 			raw_set_pc(pc);
 	}
@@ -3065,7 +3065,7 @@ static int reg_decode(unsigned int *s, unsigned int *n, unsigned int *d, int *ne
 			dn_minus(&x, &x);
 			*negative = 1;
 		} else {
-			err(ERR_RANGE);
+			report_err(ERR_RANGE);
 			return 1;
 		}
 	} else if (negative != NULL)
@@ -3073,7 +3073,7 @@ static int reg_decode(unsigned int *s, unsigned int *n, unsigned int *d, int *ne
 	decNumberTrunc(&y, &x);
 	*s = rsrc = dn_to_int(&y);
 	if (rsrc >= TOPREALREG) {
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 		return 1;
 	}
 	decNumberFrac(&y, &x);
@@ -3098,14 +3098,14 @@ static int reg_decode(unsigned int *s, unsigned int *n, unsigned int *d, int *ne
 				num = q;
 			*n = num;
 		} else if (rsrc+num > TOPREALREG || rdest+num > TOPREALREG) {
-			err(ERR_RANGE);
+			report_err(ERR_RANGE);
 			return 1;
 		}
 	} else {
 		if (num == 0) {
 			*n = TOPREALREG - rsrc;
 		} else if (rsrc+num > TOPREALREG) {
-			err(ERR_RANGE);
+			report_err(ERR_RANGE);
 			return 1;
 		}
 	}
@@ -3130,9 +3130,9 @@ void op_regswap(decimal64 *a, decimal64 *b, enum nilop op) {
 	if (reg_decode(&s, &n, &d, NULL) || s == d)
 		return;
 	if (s < d && (s+n) > d)
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 	else if (d < s && (d+n) > s)
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 	else {
 		for (i=0; i<n; i++)
 			swap_reg(Regs+s+i, Regs+d+i);
@@ -3234,7 +3234,7 @@ static void rargs(const opcode op) {
 			arg |= RARG_IND;
 	}
 	if (arg >= lim || (argcmds[cmd].cmplx && arg >= TOPREALREG-1 && (arg & 1)))
-		err(ind?ERR_RANGE:ERR_PROG_BAD);
+		report_err(ind?ERR_RANGE:ERR_PROG_BAD);
 	else {
 		CALL(argcmds[cmd].f)(arg, (enum rarg)cmd);
 		State.state_lift = 1;
@@ -3529,7 +3529,7 @@ void stoprog(opcode c) {
  */
 static int check_delete_prog(unsigned int pc) {
 	if (! isRAM(pc))
-		err(ERR_READ_ONLY);
+		report_err(ERR_READ_ONLY);
 	else if (State2.runmode)
 		bad_mode_error();
 	else
@@ -3574,7 +3574,7 @@ static void delete_until(unsigned int op) {
 
 	t = find_opcode_from(pc, op, 1);
 	if (t == 0 || t < pc) {
-		err(ERR_NO_LBL);
+		report_err(ERR_NO_LBL);
 		return;
 	}
 	while (getprog(state_pc()) != op) {

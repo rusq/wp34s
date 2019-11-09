@@ -174,12 +174,12 @@ int move_retstk(int distance)
 #ifndef REALBUILD
 	// Sanity check
 	if (XromFlags.xIN) {
-		err(ERR_ILLEGAL);
+		report_err(ERR_ILLEGAL);
 		return 1;
 	}
 #endif
 	if (RetStkSize + RetStkPtr + distance < 0) {
-		err(ERR_RAM_FULL);
+		report_err(ERR_RAM_FULL);
 		return 1;
 	}
 	xcopy(RetStk + RetStkPtr + distance, RetStk + RetStkPtr, (-RetStkPtr) << 1);
@@ -248,7 +248,7 @@ void version(enum nilop op) {
 }
 
 void cmd_off(enum nilop op) {
-	shutdown();
+	shutdown_calc();
 }
 
 #ifndef state_pc
@@ -501,7 +501,7 @@ static void set_was_complex(void) {
 
 /* Produce an error and stop
  */
-int err(const unsigned int e) {
+int report_err(const unsigned int e) {
 	if (Error == ERR_NONE) {
 		Error = e;
 		if (e == ERR_NONE) {
@@ -515,9 +515,9 @@ int err(const unsigned int e) {
 
 /* Display a warning
  */
-int warn(const unsigned int e) {
+int report_warn(const unsigned int e) {
 	if (Running) {
-		return err(e);
+		return report_err(e);
 	}
 	error_message(e);
 #ifndef CONSOLE
@@ -531,13 +531,13 @@ int warn(const unsigned int e) {
 
 /* Doing something in the wrong mode */
 void bad_mode_error(void) {
-	err(ERR_BAD_MODE);
+	report_err(ERR_BAD_MODE);
 }
 
 
 /* User command to produce an error */
 void cmderr(unsigned int arg, enum rarg op) {
-	err(arg);
+	report_err(arg);
 }
 
 
@@ -558,9 +558,9 @@ static void error(const char *fmt, ...) {
 	exit(1);
 }
 
-#define illegal(op)	do { err(ERR_PROG_BAD); printf("illegal opcode 0x%08x\n", op); } while (0)
+#define illegal(op)	do { report_err(ERR_PROG_BAD); printf("illegal opcode 0x%08x\n", op); } while (0)
 #else
-#define illegal(op)	do { err(ERR_PROG_BAD); } while (0)
+#define illegal(op)	do { report_err(ERR_PROG_BAD); } while (0)
 #endif
 
 /* Real rounding mode access routine
@@ -622,7 +622,7 @@ void rarg_round(unsigned int arg, enum rarg op) {
 	const enum rounding rm = get_rounding_mode();
 
 	if (is_intmode()) {
-		err(ERR_BAD_MODE);
+		report_err(ERR_BAD_MODE);
 		return;
 	}
 
@@ -655,11 +655,11 @@ static int check_special(const decNumber *x) {
 	if (decNumberIsSpecial(&y)) {
 		if (! get_user_flag(NAN_FLAG)) {
 			if (decNumberIsNaN(&y))
-				err(ERR_DOMAIN);
+				report_err(ERR_DOMAIN);
 			else if (decNumberIsNegative(&y))
-				err(ERR_MINFINITY);
+				report_err(ERR_MINFINITY);
 			else
-				err(ERR_INFINITY);
+				report_err(ERR_INFINITY);
 			return 1;
 		}
 	}
@@ -966,7 +966,7 @@ const char *get_cmdline(void) {
 #if 0
 static int fract_convert_number(decNumber *x, const char *s) {
 	if (*s == '\0') {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 1;
 	}
 	decNumberFromString(x, s, &Ctx);
@@ -1652,7 +1652,7 @@ void cmdrrcl(unsigned int arg, enum rarg op) {
 
 	if (rcl_dbl && arg >= regX_idx && arg <= regK_idx) {
 		// dRCL is not valid for lettered registers
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 		return;
 	}
 
@@ -1810,7 +1810,7 @@ static int get_keycode_from_reg(unsigned int n)
 	int sgn;
 	const int c = row_column_to_keycode((int) get_reg_n_int_sgn((int) n, &sgn));
 	if ( c < 0 )
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 	return c;
 }
 
@@ -1888,7 +1888,7 @@ static int check_stack_overlap(unsigned int arg) {
 	if (arg + n <= global_regs() || arg >= NUMREG) {
 		return n;
 	}
-	err(ERR_STK_CLASH);
+	report_err(ERR_STK_CLASH);
 	return 0;
 }
 
@@ -1954,7 +1954,7 @@ unsigned int find_opcode_from(unsigned int pc, const opcode l, const int flags) 
 		pc = do_inc(pc, endp);
 	}
 	if (errp)
-		err(ERR_NO_LBL);
+		report_err(ERR_NO_LBL);
 	return 0;
 }
 
@@ -1981,7 +1981,7 @@ static void gsbgto(unsigned int pc, int gsb, unsigned int oldpc) {
 		}
 		if (-RetStkPtr >= (XromFlags.xIN ? XROM_RET_STACK_SIZE : RetStkSize)) {
 			// Stack is full
-			err(ERR_RAM_FULL);
+			report_err(ERR_RAM_FULL);
 			// clrretstk();
 		}
 		else {
@@ -2108,7 +2108,7 @@ unsigned int findmultilbl(const opcode o, int flags) {
 	if (lbl == 0)
 		lbl = find_opcode_from(addrLIB(0, REGION_BACKUP), dest, 0);	// Backup
 	if (lbl == 0 && (flags & FIND_OP_ERROR) != 0)
-		err(ERR_NO_LBL);
+		report_err(ERR_NO_LBL);
 	return lbl;
 }
 
@@ -2201,7 +2201,7 @@ void cmddisp(unsigned int arg, enum rarg op) {
 	if (op != RARG_DISP)
 		dispmode = (op - RARG_STD) + MODE_STD;
 	else if ((dispmode == MODE_SIG || dispmode == MODE_SIG0) && arg >= 8) {
-		err(ERR_RANGE);
+		report_err(ERR_RANGE);
 		return;
 	}
 	set_dispmode_digs(dispmode, arg);
@@ -2313,7 +2313,7 @@ void cmdskip(unsigned int arg, enum rarg op) {
 		int sgn;
 		arg = (int) get_reg_n_int_sgn((int) arg, &sgn);
 		if (sgn || arg >= 100) {
-			err(ERR_RANGE);
+			report_err(ERR_RANGE);
 			return;
 		}
 	}
@@ -2323,7 +2323,7 @@ void cmdskip(unsigned int arg, enum rarg op) {
 	else {
 		while (arg-- && !incpc());
 		if (PcWrapped) {
-			err(ERR_RANGE);
+			report_err(ERR_RANGE);
 		}
 		pc = state_pc();
 	}
@@ -2346,7 +2346,7 @@ void cmdback(unsigned int arg, enum rarg op) {
 			pc = do_dec(pc, 1);
 		} while (--arg && !PcWrapped);
 		if (PcWrapped) {
-			err(ERR_RANGE);
+			report_err(ERR_RANGE);
 			return;
 		}
 	}
@@ -2924,7 +2924,7 @@ do_not_check_limits:
 		if (was_digit_entered) {
 			CmdLineLength--;
 			if (large_exp_entry && dbl ? i > 9999 : i > 999) {
-				warn(ERR_TOO_LONG);
+				report_warn(ERR_TOO_LONG);
 				return;
 			}
 		}
@@ -2947,9 +2947,9 @@ do_not_check_limits:
 		}
 #  endif
 		if (negative)
-			warn(ERR_TOO_SMALL);
+			report_warn(ERR_TOO_SMALL);
 		else
-			warn(ERR_TOO_BIG);
+			report_warn(ERR_TOO_BIG);
 	}
 #endif
 }
@@ -3548,12 +3548,12 @@ static void digit(unsigned int c) {
 		lim++;
 	if (intm) {
 		if (c >= int_base()) {
-			warn(ERR_DIGIT);
+			report_warn(ERR_DIGIT);
 			return;
 		}
 	} else {
 		if (c >= 10) {
-			warn(ERR_DIGIT);
+			report_warn(ERR_DIGIT);
 			return;
 		}
 
@@ -3591,7 +3591,7 @@ static void digit(unsigned int c) {
 	}
 	if (CmdLineLength >= lim
 	    || (DISPLAY_DIGITS + 5 > CMDLINELEN && CmdLineLength >= CMDLINELEN)) {
-		warn(ERR_TOO_LONG);
+		report_warn(ERR_TOO_LONG);
 		return;
 	}
 
@@ -3681,7 +3681,7 @@ static void specials(const opcode op) {
 					// fraction entered (two dots); execute ENTER and enter pi
 					if (is_bad_cmdline()) {
 						if (Running || XromRunning)
-							err(ERR_DOMAIN);
+							report_err(ERR_DOMAIN);
 						break;
 					}
 					process_cmdline();
@@ -4029,7 +4029,7 @@ int reg_decode(int *s, int *n, int *d, int flash) {
 	return 0;
 
 range_error:
-	err(ERR_RANGE);
+	report_err(ERR_RANGE);
 	return 1;
 }
 
@@ -4048,7 +4048,7 @@ void op_regswap(enum nilop op) {
 		return;
 	else {
 		if ((s > d && d + n > s) || (d > s && s + n > d))
-			err(ERR_RANGE);
+			report_err(ERR_RANGE);
 		else {
 			for (i = 0; i < n; i++)
 				swap_reg(get_reg_n(s + i), get_reg_n(d + i));
@@ -4237,7 +4237,7 @@ static long long int intResult(decNumber *r) {
 	set_carry(dn_eq(&ri, &t) ? 0 : 1);
 
 	if (decNumberIsNaN(&t)) {
-		err(ERR_DOMAIN);
+		report_err(ERR_DOMAIN);
 		return 0;
 	}
 	if (decNumberIsSpecial(&t)) {
@@ -4277,7 +4277,7 @@ long long int intMonadic(long long int x) {
 			if (s)
 				dn_minus(&rx, &rx);
 			if (NULL == fp(&r, &rx))
-				err(ERR_DOMAIN);
+				report_err(ERR_DOMAIN);
 			else
 				return intResult(&r);
 		}
@@ -4310,7 +4310,7 @@ long long int intDyadic(long long int y, long long int x) {
 			ullint_to_dn(&ry, vy);	if (sy)	dn_minus(&ry, &ry);
 
 			if (NULL == fp(&r, &ry, &rx))
-				err(ERR_DOMAIN);
+				report_err(ERR_DOMAIN);
 			else
 				return intResult(&r);
 		}
@@ -4602,7 +4602,7 @@ static long long int universal_dispatch_int(long long int y, long long int x, un
 				result = ((FP_MONADIC_REAL)function_pointer)(&r, &rx);
 			}
 			if (NULL == result) {
-				err(ERR_DOMAIN);
+				report_err(ERR_DOMAIN);
 			}
 			else {
 				return intResult(&r);
@@ -4900,7 +4900,7 @@ static void rargs(const opcode op) {
 
 			if (arg > get_reg_limit(RARG_RCL, arg)) {
 				// Invalid register specified for indirect access
-				err(ERR_RANGE);
+				report_err(ERR_RANGE);
 				return;
 			}
 			regval = get_reg_n_int_sgn(arg, &sgn);
@@ -4929,11 +4929,11 @@ static void rargs(const opcode op) {
 	}
 	if (arg > lim) {
 		// Argument is too large
-range:		err(ERR_RANGE);
+range:		report_err(ERR_RANGE);
 	}
 	else if (argcmds[cmd].cmplx && arg >= TOPREALREG-1 && arg < NUMREG && (arg & 1)) {
 		// Complex commands on special registers only allowed for X, Z, A, C, L & J
-		err(ERR_ILLEGAL);
+		report_err(ERR_ILLEGAL);
 	}
 	else {
 		// Dispatch the command
@@ -5070,7 +5070,7 @@ void xeq(opcode op)
 	}
 #if INTERRUPT_XROM_TICKS > 0
 	if (OnKeyTicks >= INTERRUPT_XROM_TICKS) {
-		err(ERR_INTERRUPTED);
+		report_err(ERR_INTERRUPTED);
 		while (get_key() >= 0) { } // Empty keyboard buffer
 	}
 #endif
@@ -5362,7 +5362,7 @@ unsigned char *plot_check_range( int arg, int width, int height )
 	 *  Check if we have enough room
 	 */
 	if ( width > PAPER_WIDTH || arg + ( bytes + n - 1 ) / n > lim ) {
-		err( ERR_RANGE );
+		report_err( ERR_RANGE );
 		return (unsigned char *) NULL;
 	}
 	return p;
@@ -5476,7 +5476,7 @@ void cmdplotpixel( unsigned int arg, enum rarg op )
  */
 int not_running(void) {
 	if ( Running ) {
-		err(ERR_ILLEGAL);
+		report_err(ERR_ILLEGAL);
 		return 0;
 	}
 	return 1;
@@ -5548,7 +5548,7 @@ void cmdlocr(unsigned int arg, enum rarg op) {
 	// compute space needed
 	sp -= size;
 	if (-sp > RetStkSize) {
-		err(ERR_RAM_FULL);
+		report_err(ERR_RAM_FULL);
 		return;
 	}
 	if ( old_size > 0 ) {
@@ -5612,7 +5612,7 @@ void cmdxin(unsigned int arg, enum rarg op) {
 	 * xrom code, so trap it here.
 	 */
 	if (XromFlags.xIN) {
-		err(ERR_ILLEGAL);
+		report_err(ERR_ILLEGAL);
 		return;
 	}
 #endif
@@ -5731,7 +5731,7 @@ void cmdxin(unsigned int arg, enum rarg op) {
 				cmdxout(0, RARG_XROM_OUT);
 			} 
 			else
-				err(ERR_DOMAIN);	// this will do all the cleanup
+				report_err(ERR_DOMAIN);	// this will do all the cleanup
 			return;
 		}
 	}
@@ -5753,7 +5753,7 @@ void cmdxout(unsigned int arg, enum rarg op) {
 #ifndef REALBUILD
 	// shouldn't happen in final build
 	if (! XromFlags.xIN) {
-		err(ERR_ILLEGAL);
+		report_err(ERR_ILLEGAL);
 		return;
 	}
 #endif
@@ -5968,7 +5968,7 @@ void cmdmode(unsigned int arg, enum rarg cmd) {
  */
 void cmdlpop(enum nilop op) {
 	if (LocalRegs != RetStkPtr) {
-		err(ERR_ILLEGAL);
+		report_err(ERR_ILLEGAL);
 		return;
 	}
 	RetStkPtr = LocalRegs;
@@ -5993,7 +5993,7 @@ void cmdregs(unsigned int arg, enum rarg op) {
 		if (UState.mode_double && arg < STACK_SIZE + EXTRA_REG) {
 			// Special case: we're in int mode but came from DP
 			// We must not release the space needed for the DP lettered registers
-			err(ERR_RANGE);
+			report_err(ERR_RANGE);
 			return;
 		}
 		// register length 8 bytes

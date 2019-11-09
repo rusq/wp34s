@@ -73,7 +73,7 @@ static int check_number(const decNumber *r, int n) {
 	decNumber s;
 
 	if (dn_lt0(dn_compare(&s, r, small_int(n)))) {
-		err(ERR_MORE_POINTS);
+		report_err(ERR_MORE_POINTS);
 		return 1;
 	}
 	return 0;
@@ -914,7 +914,7 @@ static int param_verify(decNumber *r, const decNumber *n, int zero, int intg) {
 			(!zero && dn_eq0(n)) ||
 			(intg && !is_int(n))) {
 		decNumberZero(r);
-		err(ERR_BAD_PARAM);
+		report_err(ERR_BAD_PARAM);
 		return 1;
 	}
 	return 0;
@@ -930,7 +930,7 @@ static int param_range01(decNumber *r, const decNumber *p) {
 	dn_compare(&h, &const_1, p);
 	if (decNumberIsSpecial(p) || dn_lt0(p) || dn_lt0(&h)) {
 		decNumberZero(r);
-		err(ERR_BAD_PARAM);
+		report_err(ERR_BAD_PARAM);
 		return 1;
 	}
 	return 0;

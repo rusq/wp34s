@@ -56,11 +56,6 @@ ifeq "$(SYSTEM)" "Ios64"
     CC_FLAGS=-arch $(ARCH) -I$(IOS_DEVROOT)/SDKs/iPhone$(DEVICE).sdk/usr/include -DFIX_64_BITS=1 
     BASE_LDFLAGS=-L$(IOS_DEVROOT)/SDKs/iPhone$(DEVICE).sdk/usr/lib
 endif
-ifeq "$(SYSTEM)" "IosSimulator"
-    ARCH=i386
-    CC_FLAGS=-arch $(ARCH)
-    DEVICE=Simulator
-endif
 ifeq "$(SYSTEM)" "IosSimulator64"
     ARCH=x86_64
     CC_FLAGS=-arch $(ARCH)
@@ -553,13 +548,11 @@ qt_clean_dist:
 .PHONY: ios ios_lib ios_objs ios_clean
 	
 ios:
-	$(MAKE) SYSTEM=IosSimulator ios_lib
 	$(MAKE) SYSTEM=IosSimulator64 ios_lib
-	$(MAKE) SYSTEM=Ios ios_lib
 	$(MAKE) SYSTEM=Ios64 ios_lib
-	lipo -create -arch armv7 Ios/obj/libCalculator.a  -arch arm64 Ios64/obj/libCalculator.a -arch i386 IosSimulator/obj/libCalculator.a -arch x86_64 IosSimulator64/obj/libCalculator.a -output Ios/libCalculator.a
-	lipo -create -arch armv7 Ios/obj/libconsts.a -arch arm64 Ios64/obj/libconsts.a -arch i386 IosSimulator/obj/libconsts.a -arch x86_64 IosSimulator64/obj/libconsts.a -output Ios/libconsts.a
-	lipo -create -arch armv7 Ios/obj/libdecNum34s.a -arch arm64 Ios64/obj/libdecNum34s.a -arch i386 IosSimulator/obj/libdecNum34s.a -arch x86_64 IosSimulator64/obj/libdecNum34s.a -output Ios/libdecNum34s.a
+	lipo -create -arch armv7 Ios/obj/libCalculator.a  -arch arm64 Ios64/obj/libCalculator.a -arch x86_64 IosSimulator64/obj/libCalculator.a -output Ios/libCalculator.a
+	lipo -create -arch armv7 Ios/obj/libconsts.a -arch arm64 Ios64/obj/libconsts.a -arch x86_64 IosSimulator64/obj/libconsts.a -output Ios/libconsts.a
+	lipo -create -arch armv7 Ios/obj/libdecNum34s.a -arch arm64 Ios64/obj/libdecNum34s.a -arch x86_64 IosSimulator64/obj/libdecNum34s.a -output Ios/libdecNum34s.a
 			
 ios_lib: ios_objs $(CALCLIB)
 

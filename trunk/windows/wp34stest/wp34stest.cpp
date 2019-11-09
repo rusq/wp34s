@@ -19,7 +19,7 @@ int view_instruction_counter;
 
 extern "C" {
 	const char *pretty(unsigned char z) { return 0; }
-	void shutdown( void ) { exit( 0 ); }
+	void shutdown_calc( void ) { exit( 0 ); }
 	int is_key_pressed(void) { return 0; }
 	#ifndef watchdog
 	void watchdog(void)  {}

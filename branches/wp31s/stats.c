@@ -47,7 +47,7 @@
  */
 int sigmaCheck(void) {
 	if (sigmaN == 0) {
-		err(ERR_MORE_POINTS);
+		report_err(ERR_MORE_POINTS);
 		return 1;
 	}
 	return 0;
@@ -89,7 +89,7 @@ static void correlation(decNumber *, const enum sigma_modes);
 
 static int check_data(int n) {
 	if (sigmaCheck() || sigmaN < n) {
-		err(ERR_MORE_POINTS);
+		report_err(ERR_MORE_POINTS);
 		return 1;
 	}
 	return 0;
@@ -423,7 +423,7 @@ void stats_wdeviations(enum nilop op) {
 		return;
 	get_sigmas(NULL, NULL, &sy, NULL, &syy, &sxy, SIGMA_QUIET_LINEAR);
 	if (dn_lt(&sy, &const_2)) {
-		err(ERR_MORE_POINTS);
+		report_err(ERR_MORE_POINTS);
 		return;
 	}
 	decimal128ToNumber(&sigmaX2Y, &sxxy);

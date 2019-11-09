@@ -386,7 +386,7 @@ void date_alphaday(enum nilop op) {
 
 	getX(&x);
 	if (decNumberIsSpecial(&x) || extract_date(&x, &y, &m, &d))
-		err(ERR_BAD_DATE);
+		report_err(ERR_BAD_DATE);
 	else {
 		dow = day_of_week(y, m, d, NULL);
 		copy3(&("MONTUEWEDTHUFRISATSUN"[3*(dow-1)]));
@@ -400,7 +400,7 @@ void date_alphamonth(enum nilop op) {
 
 	getX(&x);
 	if (decNumberIsSpecial(&x) || extract_date(&x, &y, &m, &d))
-		err(ERR_BAD_DATE);
+		report_err(ERR_BAD_DATE);
 	else {
 		copy3(&(mons[3*m - 3]));
 	}
@@ -445,7 +445,7 @@ void date_alphadate(enum nilop op) {
 	getX(&x);
 	xset(buf, '\0', sizeof(buf));
 	if (extract_date(&x, &y, &m, &d)) {
-		err(ERR_BAD_DATE);
+		report_err(ERR_BAD_DATE);
 		return;
 	}
 	switch (UState.date_mode) {
@@ -491,7 +491,7 @@ static int extract_time(int *h, int *m, int *s, int hour_threshold) {
 	*m = (hms % 100);
 	*h = hms / 100;
 	if (hms < 0 || *h >= hour_threshold || *m >= 60 || *s >= 60) {
-		err(ERR_BAD_DATE);
+		report_err(ERR_BAD_DATE);
 		return 1;
 	}
 	return 0;
@@ -575,7 +575,7 @@ void date_date(enum nilop op) {
 		build_date(&z, y, m, d);
 		setX(&z);
 	} else
-		err(ERR_NO_CRYSTAL);
+		report_err(ERR_NO_CRYSTAL);
 }
 
 void date_time(enum nilop op) {
@@ -589,7 +589,7 @@ void date_time(enum nilop op) {
 		dn_mulpow10(&b, &a, -4);
 		setX(&b);
 	} else
-		err(ERR_NO_CRYSTAL);
+		report_err(ERR_NO_CRYSTAL);
 }
 
 void date_setdate(enum nilop op) {
@@ -598,7 +598,7 @@ void date_setdate(enum nilop op) {
 
 	getX(&x);
 	if (extract_date(&x, &y, &m, &d)) {
-		err(ERR_BAD_DATE);
+		report_err(ERR_BAD_DATE);
 		return;
 	}
 	dow = day_of_week(y, m, d, NULL);
@@ -608,11 +608,11 @@ void date_setdate(enum nilop op) {
 		RTC_SetDate((unsigned short) y, (unsigned char) m,
 			    (unsigned char) d, (unsigned char) dow);
 	} else
-		err(ERR_NO_CRYSTAL);
+		report_err(ERR_NO_CRYSTAL);
 #else
 	// So that very strict compilers (i.e. gcc4.6 do not complain that dow is unused with -Wall)
 	(void) dow;
-	err(ERR_ILLEGAL);
+	report_err(ERR_ILLEGAL);
 #endif
 }
 
@@ -625,8 +625,8 @@ void date_settime(enum nilop op) {
 		busy();
 		RTC_SetTime((unsigned char) h, (unsigned char) m, (unsigned char) s);
 	} else
-		err(ERR_NO_CRYSTAL);
+		report_err(ERR_NO_CRYSTAL);
 #else
-	err(ERR_ILLEGAL);
+	report_err(ERR_ILLEGAL);
 #endif
 }

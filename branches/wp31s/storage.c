@@ -230,7 +230,7 @@ static int program_flash( void *destination, void *source, int count )
 		 *  Command the controller to erase and write the page.
 		 */
 		if ( flash_command( cmd ) ) {
-			err( ERR_IO );
+			report_err( ERR_IO );
 			break;
 		}
 	}
@@ -292,13 +292,13 @@ static int program_flash( void *destination, void *source, int count )
 		f = fopen( name, "wb+" );
 	}
 	if ( f == NULL ) {
-		err( ERR_IO );
+		report_err( ERR_IO );
 		return 1;
 	}
 	fseek( f, offset, SEEK_SET );
 	if ( count != fwrite( dest, PAGE_SIZE, count, f ) ) {
 		fclose( f );
-		err( ERR_IO );
+		report_err( ERR_IO );
 		return 1;
 	}
 	fclose( f );
@@ -320,7 +320,7 @@ void flash_backup( enum nilop op )
 		checksum_all();
 
 		if ( program_flash( &BackupFlash, &PersistentRam, sizeof( BackupFlash ) / PAGE_SIZE ) ) {
-			err( ERR_IO );
+			report_err( ERR_IO );
 			DispMsg = "Error";
 		}
 		else {
@@ -334,7 +334,7 @@ void flash_restore( enum nilop op )
 {
 	if ( not_running() ) {
 		if ( checksum_backup() ) {
-			err( ERR_INVALID );
+			report_err( ERR_INVALID );
 		}
 		else {
 			xcopy( &PersistentRam, &BackupFlash, sizeof( PersistentRam ) );
@@ -355,7 +355,7 @@ void load_registers( enum nilop op )
 		/*
 		 *  Not a valid backup region
 		 */
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 		return;
 	}
 	count = NumRegs;
@@ -376,7 +376,7 @@ void load_sigma( enum nilop op )
 		/*
 		 *  Not a valid backup region
 		 */
-		err( ERR_INVALID );
+		report_err( ERR_INVALID );
 		return;
 	}
 	sigmaCopy( &BackupFlash._stat_regs );
@@ -393,7 +393,7 @@ void load_state( enum nilop op )
 			/*
 			 *  Not a valid backup region
 			 */
-			err( ERR_INVALID );
+			report_err( ERR_INVALID );
 			return;
 		}
 		xcopy( &RandS1, &BackupFlash._rand_s1, (char *) &Crc - (char *) &RandS1 );
