@@ -2054,7 +2054,7 @@ static int process_multi(const keycode c) {
 			State2.alphashift = 1 - State2.alphashift;
 		else
 			reset_multi();
-			return STATE_UNFINISHED;
+		return STATE_UNFINISHED;
 
 	default:
 		break;
