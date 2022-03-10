@@ -79,7 +79,7 @@ zeta_0::		Num 1/2
 zeta_int::		LocR 08
 			STO .01
 			STO .07
-			x>? 0
+			x>0?
 				JMP zeta_calc
 
 zeta_neg::		Num 1
