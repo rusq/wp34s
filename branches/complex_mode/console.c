@@ -490,7 +490,7 @@ static unsigned int dump_commands(int silent) {
 }
 
 
-void shutdown( void )
+void shutdown_calc( void )
 {
 	checksum_all();
 	setuptty( 1 );
@@ -713,7 +713,7 @@ skipargs:
 		}
 		setuptty(1);
 	}
-	shutdown();
+	shutdown_calc();
 	return 0;
 }
 

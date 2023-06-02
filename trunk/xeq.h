@@ -1436,6 +1436,7 @@ extern enum shifts shift_down(void);
 extern int get_key(void);
 extern int put_key(int k);
 extern void shutdown_calc(void);
+//extern void shutdown(void);
 #ifdef REALBUILD
 extern void lock(void);
 extern void unlock(void);

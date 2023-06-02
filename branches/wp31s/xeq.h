@@ -1003,8 +1003,8 @@ enum shifts {
 /*
  *  Function prototypes
  */
-extern int err(const unsigned int);
-extern int warn(const unsigned int);
+extern int report_err(const unsigned int);
+extern int report_warn(const unsigned int);
 extern void bad_mode_error(void);
 extern const char *pretty(unsigned char);
 extern void prettify(const char *in, char *out, int no_brackets);

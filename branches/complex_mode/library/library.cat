@@ -14,9 +14,9 @@ Initial library catalogue (format: flash file)
   Source: wp34c-lib.dat, Program name: '[PSI]', Line number: 1390
 Library details:
 // WP 34S assembly preprocessor enabled: '-pp'
-// Opcode map source: C:\Users\Marcus\PROJEKTE\wp34s\branches\complex_mode\tools\wp34c.op
+// Opcode map source: C:\Users\njdow\wp34s\r3914\wp34s-code\branches\complex_mode\tools\wp34c.op
 // Opcode SVN version: -- unknown --
-// Running WP 34S preprocessor from: C:/Users/Marcus/PROJEKTE/wp34s/branches/complex_mode/tools/wp34s_pp.pl
+// Running WP 34S preprocessor from: C:/Users/njdow/wp34s/r3914/wp34s-code/branches/complex_mode/tools/wp34s_pp.pl
 // WP 34s version: 33
 // CRC16: 16A0
 // Running in V3 Flash-mode. Max words: 9999

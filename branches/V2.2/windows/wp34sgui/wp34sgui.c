@@ -243,7 +243,7 @@ enum shifts shift_down(void)
 /*
  *  Shut down the emulator from the application
  */
-void shutdown( void )
+void shutdown_calc( void )
 {
 	// Shutdown();
 	ExitEmulator();

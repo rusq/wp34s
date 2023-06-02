@@ -118,7 +118,7 @@ void version(decimal64 *nul1, decimal64 *nul2, enum nilop op) {
 }
 
 void cmd_off(decimal64 *a, decimal64 *nul2, enum nilop op) {
-	shutdown();
+	shutdown_calc();
 }
 
 unsigned int state_pc(void) {	return State.state_pc;	}
@@ -230,9 +230,9 @@ static void error(const char *fmt, ...) {
 	exit(1);
 }
 
-#define illegal(op)	do { err(ERR_PROG_BAD); printf("illegal opcode 0x%08x\n", op); } while (0)
+#define illegal(op)	do { report_err(ERR_PROG_BAD); printf("illegal opcode 0x%08x\n", op); } while (0)
 #else
-#define illegal(op)	do { err(ERR_PROG_BAD); } while (0)
+#define illegal(op)	do { report_err(ERR_PROG_BAD); } while (0)
 #endif
 
 /* Real rounding mode access routine

@@ -249,6 +249,7 @@ void version(enum nilop op) {
 
 void cmd_off(enum nilop op) {
 	shutdown_calc();
+//	shutdown();
 }
 
 #ifndef state_pc

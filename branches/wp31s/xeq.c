@@ -183,7 +183,7 @@ void browse_registers(enum nilop op)
 #endif
 
 void cmd_off(enum nilop op) {
-	shutdown();
+	shutdown_calc();
 }
 
 void set_pc(unsigned int pc) {
@@ -279,7 +279,7 @@ int report_err(const unsigned int e) {
 
 /* Display a warning
  */
-int warn(const unsigned int e) {
+int report_warn(const unsigned int e) {
 	if (XromRunning) {
 		return report_err(e);
 	}
@@ -322,9 +322,9 @@ static void error(const char *fmt, ...) {
 	exit(1);
 }
 
-#define illegal(op)	do { err(ERR_PROG_BAD); printf("illegal opcode 0x%08x\n", op); } while (0)
+#define illegal(op)	do { report_err(ERR_PROG_BAD); printf("illegal opcode 0x%08x\n", op); } while (0)
 #else
-#define illegal(op)	do { err(ERR_PROG_BAD); } while (0)
+#define illegal(op)	do { report_err(ERR_PROG_BAD); } while (0)
 #endif
 
 /* Real rounding mode access routine
@@ -2388,7 +2388,7 @@ do_not_check_limits:
 		if (was_digit_entered) {
 			CmdLineLength--;
 			if (large_exp_entry && dbl ? i > 9999 : i > 999) {
-				warn(ERR_TOO_LONG);
+				report_warn(ERR_TOO_LONG);
 				return;
 			}
 		}
@@ -2411,9 +2411,9 @@ do_not_check_limits:
 		}
 #  endif
 		if (negative)
-			warn(ERR_TOO_SMALL);
+			report_warn(ERR_TOO_SMALL);
 		else
-			warn(ERR_TOO_BIG);
+			report_warn(ERR_TOO_BIG);
 	}
 #endif
 }
@@ -2889,12 +2889,12 @@ static void digit(unsigned int c) {
 		lim++;
 	if (intm) {
 		if (c >= int_base()) {
-			warn(ERR_DIGIT);
+			report_warn(ERR_DIGIT);
 			return;
 		}
 	} else {
 		if (c >= 10) {
-			warn(ERR_DIGIT);
+			report_warn(ERR_DIGIT);
 			return;
 		}
 
@@ -2932,7 +2932,7 @@ static void digit(unsigned int c) {
 	}
 	if (CmdLineLength >= lim
 	    || (DISPLAY_DIGITS + 5 > CMDLINELEN && CmdLineLength >= CMDLINELEN)) {
-		warn(ERR_TOO_LONG);
+		report_warn(ERR_TOO_LONG);
 		return;
 	}
 

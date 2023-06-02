@@ -201,7 +201,7 @@ void clpall( void )
 static int check_delete_prog( unsigned int pc ) 
 {
 	if ( !isRAM( pc ) || ( pc == ProgSize && getprog( pc ) == ( OP_NIL | OP_END ) ) ) {
-		warn(ERR_READ_ONLY);
+		report_warn(ERR_READ_ONLY);
 	}
 	else {
 		return 0;
@@ -286,7 +286,7 @@ void stoprog( opcode c ) {
 		stoprog( OP_NIL | OP_END );
 
 	if ( !isRAM( pc ) ) {
-		warn( ERR_READ_ONLY );
+		report_warn( ERR_READ_ONLY );
 		return;
 	}
 	clrretstk();

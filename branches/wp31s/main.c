@@ -481,7 +481,7 @@ void go_idle( void )
 
 
 /*
- *  Common part of shutdown() and deep_sleep()
+ *  Common part of shutdown_calc() and deep_sleep()
  */
 NO_RETURN void turn_off( void )
 {
@@ -511,7 +511,7 @@ NO_RETURN void turn_off( void )
 /*
  *  Turn everything except the backup sram off
  */
-NO_RETURN void shutdown( void )
+NO_RETURN void shutdown_calc( void )
 {
         /*
          *  CmdLine will be lost, process it first
@@ -628,7 +628,7 @@ void deep_sleep( void )
                 /*
                  *  No point in going to deep sleep if we have reached the APD timeout
                  */
-                shutdown();
+                shutdown_calc();
         }
 
         lock();
@@ -1874,7 +1874,7 @@ NO_RETURN int main(void)
                          *  We have a reason to power the device off
                          */
                         if ( !DebugFlag && StartupTicks >= 10 ) {
-                                shutdown();
+                                shutdown_calc();
                         }
                 }
         }

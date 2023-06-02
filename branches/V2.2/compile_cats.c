@@ -764,8 +764,12 @@ static s_opcode conv_catalogue[] = {
 	CONV(OP_G_OZ,		1, "oz->g")
 	CONV(OP_G_TOZ,		0, "g->tr oz")
 	CONV(OP_G_TOZ,		1, "tr oz->g")
-	CONV(OP_HA_ACRE,	0, "ha->acre")
-	CONV(OP_HA_ACRE,	1, "acre->ha")
+//	CONV(OP_HA_ACRE,	0, "ha->acre") //ND
+//	CONV(OP_HA_ACRE,	1, "acre->ha") //ND
+	CONV(OP_HA_ACREUK,	0, "ha->acreuk")
+	CONV(OP_HA_ACREUK,	1, "acreuk->ha")
+	CONV(OP_HA_ACREUS,	0, "ha->acreus")
+	CONV(OP_HA_ACREUS,	1, "acreus->ha")
 	CONV(OP_J_BTU,		0, "J->Btu")
 	CONV(OP_J_BTU,		1, "Btu->J")
 	CONV(OP_J_CAL,		0, "J->Cal")
@@ -826,8 +830,8 @@ static s_opcode conv_catalogue[] = {
 	CONV(OP_T_TON,		1, "ton->t")
 	CONV(OP_W_HP,		0, "W->PS(HP)")
 	CONV(OP_W_HP,		1, "PS(HP)->W")
-	CONV(OP_W_HPUK,		0, "W->bhp")
-	CONV(OP_W_HPUK,		1, "bhp->W")
+//	CONV(OP_W_HPUK,		0, "W->bhp") //ND
+//	CONV(OP_W_HPUK,		1, "bhp->W") //ND
 	CONV(OP_W_HPe,		0, "W->HPe")
 	CONV(OP_W_HPe,		1, "HPe->W")
 	CONV(OP_W_HP550,	0, "W->hp")

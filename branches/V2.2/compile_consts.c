@@ -279,7 +279,7 @@ struct constsml constsml[] = {
 	CONSTANT("\261\230",	"PC_sigma",	"5.670373E-8"),		// Stefan BOltzmann consant
 	CONSTANT("\224\270",	"PC_phi0",	"2.067833758E-15"),	// Magnetic flux quantum
 
-	/* Plank related constants */
+	/* Planck related constants */
 	CONSTANT("h",		"PC_PLANK",	"6.62606957E-34"),	// Planck's constant
 	CONSTANT("\236",	"PC_hon2PI",	"1.054571726E-34"),	// Planck's constant over 2 pi.
 	CONSTANT("l\276",	"PC_PlanckL",	"1.616199E-35"),	// Base Planck unit of length
@@ -442,7 +442,7 @@ struct constsml conversions[] = {
 	CONV(NULL, NULL, NULL, NULL)
 };*/
 
-struct _constsml conversions[] = {
+struct constsml conversions[] = {
 	CONV("kg",	"lb",		"KG_LBM",	"0.45359237"),		// source: NIST; exact
 	CONV("kg",	"stone",	"KG_STONE",	"6.35029318"),		// derived: 14 lbs to a stone using exact lb; exact
 	CONV("kg",	"cwt",		"KG_CWT",	"50.80234544"),		// derived: 112lb to a long cwt using exact lb;exact
