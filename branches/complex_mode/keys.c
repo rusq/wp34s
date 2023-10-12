@@ -1517,10 +1517,10 @@ fin2:		State2.gtodot = 0;
 /* Process a keystroke in alpha mode
  */
 static int process_alpha(const keycode c) {
+	unsigned int alpha_pos = State2.alpha_pos;
 	const enum shifts shift = reset_shift();
 	int ch = keycode_to_alpha(c, shift);
-	unsigned int alpha_pos = State2.alpha_pos, n;
-        int op = STATE_UNFINISHED;
+	int op = STATE_UNFINISHED;
 	State2.alpha_pos = 0;
 
 	switch (c) {
@@ -1565,8 +1565,10 @@ static int process_alpha(const keycode c) {
 		if (shift == SHIFT_N) {
 			if ( State2.runmode ) {
 				// Alpha scroll left
-				n = alpha_pos + 1;
-				State2.alpha_pos = ( n < ( alen() + 5 ) / 6 ) ? n : alpha_pos;
+				if ((alpha_pos == 0) || ( (alen()-6*alpha_pos) >= 12)) {
+					alpha_pos += 1;
+				}
+				State2.alpha_pos = alpha_pos;
 				return STATE_UNFINISHED;
 			}
 			return STATE_BST;
@@ -1578,7 +1580,7 @@ static int process_alpha(const keycode c) {
 			if ( State2.runmode ) {
 				// Alpha scroll right
 				if (alpha_pos > 0)
-					State2.alpha_pos = alpha_pos-1;
+					State2.alpha_pos = alpha_pos - 1;
 				return STATE_UNFINISHED;
 			}
 			return STATE_SST;

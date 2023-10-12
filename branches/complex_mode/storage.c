@@ -321,6 +321,8 @@ void delprog( void )
 	if ( pc == 0 )
 		return;
 
+	clrretstk(); // ND change
+
 	off = isDBL( Prog_1[ pc ]) ? 2 : 1;
 	ProgSize -= off;
 	ProgEnd -= off;
