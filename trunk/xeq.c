@@ -3545,6 +3545,7 @@ static void digit(unsigned int c) {
 	const int intm = is_intmode();
 	int lim = DISPLAY_DIGITS;
 
+	if (intm) lim = 16;
 	if (Cmdline[0] == '-')
 		lim++;
 	if (intm) {

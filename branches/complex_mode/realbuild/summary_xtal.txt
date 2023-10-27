@@ -1,7 +1,7 @@
-.fixed          0x00100000    0x1e3bc
-.revision       0x0011e3bc       0x44
-                0x0011e400                UserFlash = .
-                0x00001400                UserFlashSize = (. - UserFlash)
+.fixed          0x00100000    0x1e41c
+.revision       0x0011e41c       0xe4
+                0x0011e500                UserFlash = .
+                0x00001300                UserFlashSize = (. - UserFlash)
 .backupflash    0x0011f800      0x800
 .cmdtab         0x000f0000     0x2060
 .bss            0x00200000      0x1a8

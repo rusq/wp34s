@@ -1,5 +1,5 @@
-.fixed          0x00100000    0x1ea0c
-.revision       0x0011ea0c       0xf4
+.fixed          0x00100000    0x1ea6c
+.revision       0x0011ea6c       0x94
                 0x0011eb00                UserFlash = .
                 0x00000d00                UserFlashSize = (. - UserFlash)
 .backupflash    0x0011f800      0x800

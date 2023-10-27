@@ -896,11 +896,31 @@ static void disp_x(const char *p) {
 	}
 
 	if (is_intmode()) {
-		for (i=0; *p != '\0'; p++) {
+		int len = 0;
+		const char* q = p;
+		for (i = 0; *q != '\0'; q++) {
+			len++;
+		} // len counts digits.
+/*
+Idea: if len < 13, no problem.
+If len = 13 to 15, use exponent.
+if len = 16, use exponent but display from digit 2 onwards.
+Note: exponent used by hex label, carry, and overflow. 
+*/
+		if (len == 16) {
+			len = 15;
+			p++;
+		}
+		for (i=0; *p != '\0' && i < 12*SEGS_PER_DIGIT; p++) { // display digits 1 up to 12 in display.
 			set_dig(i, *p);
 			i += SEGS_PER_DIGIT;
 		}
-		carry_overflow();
+		for (i=SEGS_EXP_BASE; *p != '\0' && i < SEGS_EXP_BASE+3*SEGS_PER_EXP_DIGIT; p++) {
+			set_dig(i, *p);
+			i += SEGS_PER_EXP_DIGIT;
+		}
+
+		if (len < 13) carry_overflow(); // don't display base, carry or overflow if exponent being used
 	} else {
 		set_separator_decimal_modes();
 
