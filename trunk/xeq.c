@@ -980,6 +980,10 @@ static int fract_convert_number(decNumber *x, const char *s) {
  */
 int is_bad_cmdline(void)
 {
+#ifdef LONG_INTMODE_ENTRY
+	if (is_intmode())
+		return 0;
+#endif
 #ifndef IGNORE_INVALID_FRACTIONS
 	if (CmdLineDot == 2) {
 		char *p;
@@ -1005,8 +1009,32 @@ int is_bad_cmdline(void)
 
 /* Process the command line if any
  */
+#ifdef LONG_INTMODE_ENTRY
+void process_cmdline_int(void) {
+	if (CmdLineLength) {
+		lift_if_enabled();
+		set_lift();
+		setX_int_sgn(CmdLineInt, (int) CmdLineDot); //cast to int
+		CmdLineLength = 0;
+		WasDataEntry = 0;
+		set_entry();
+		print_trace( TRACE_DATA_ENTRY, 1 );
+	}
+	CmdLineIntFlag = 0;
+	CmdLineIntSign = 0;
+	CmdLineInt = 0;
+}
+#endif
+
 void process_cmdline(void) {
 	decNumber a, b, x, t;
+
+#ifdef LONG_INTMODE_ENTRY
+	if (is_intmode()) {
+		process_cmdline_int();
+		return;
+	}
+#endif
 
 	if (CmdLineLength) {
 		const int bad_cmdline = is_bad_cmdline();
@@ -1050,11 +1078,16 @@ void process_cmdline(void) {
 		set_lift();
 		CmdLineDot = 0;
 		CmdLineEex = 0;
+#ifdef LONG_INTMODE_ENTRY
+		CmdLineInt = 0; // needed so that an intmode calculation starts off clean
+		if (cmdlinedot == 2) {
+#else
 		if (is_intmode()) {
 			const int sgn = (cmdline[0] == '-')?1:0;
 			unsigned long long int x = s_to_ull(cmdline+sgn, int_base());
 			setX_int_sgn(x, sgn);
 		} else if (cmdlinedot == 2) {
+#endif
 			char *d0, *d1, *d2;
 			int neg;
 
@@ -1338,6 +1371,11 @@ void zero_Y(void) {
 void clrx(enum nilop op) {
 	zero_X();
 	clr_lift();
+#ifdef LONG_INTMODE_ENTRY
+	CmdLineInt = 0;
+	CmdLineLength = 0;
+	CmdLineIntSign = 0;
+#endif
 }
 
 /* Zero out the stack
@@ -2958,6 +2996,12 @@ do_not_check_limits:
 /* We've encountered a CHS while entering the command line.
  */
 static void cmdlinechs(void) {
+#ifdef LONG_INTMODE_ENTRY
+	if (is_intmode()) {
+		CmdLineIntSign ^= 1; // used as sign flag during intmode entry
+		return;
+	}
+#endif
 	if (CmdLineEex) {
 #ifdef LARGE_EXPONENT_ENTRY
 		// 'D' instead of 'E' indicates a negative exponent.
@@ -3541,11 +3585,98 @@ static int is_xdigit(const char c) {
 }
 #endif
 
+#ifdef LONG_INTMODE_ENTRY
+
 static void digit(unsigned int c) {
 	const int intm = is_intmode();
 	int lim = DISPLAY_DIGITS;
 
-	if (intm) lim = 16;
+	if (intm) { // intmode stuff
+		if (c >= int_base()) {
+			report_warn(ERR_DIGIT);
+			return;
+		}
+		lim = 64; // allow people to type lots of digits if they want to.
+		// Actually, lim isn't used. This fits with how the calculator
+		// presently deals with numbers when wordsize is low.
+
+		CmdLineInt *= int_base();
+		CmdLineInt += c;
+		CmdLineLength++;
+		return;
+	}
+
+	// not intmode stuff
+	if (Cmdline[0] == '-')
+		lim++;
+	if (c >= 10) {
+		report_warn(ERR_DIGIT);
+		return;
+	}
+	if (CmdLineEex) {
+		lim = CMDLINELEN;
+#ifdef SHIFT_EXPONENT
+		if (CmdLineLength >= lim) {
+			char *p = &Cmdline[CmdLineEex + 1];
+
+			if (*p == '-')
+				p++;
+			while (p < &Cmdline[CMDLINELEN]) {
+				p[0] = p[1];
+				p++;
+			}
+			CmdLineLength--;
+		}
+#endif
+	}
+	else {
+		lim += CmdLineDot;
+#ifdef PRETTY_FRACTION_ENTRY
+		if (CmdLineDot >= 2) {
+#  ifdef FRACTION_ENTRY_OVERFLOW_LEFT
+			// Make space for the minus sign
+			lim = CMDLINELEN - (Cmdline[0] != '-');
+#  elif defined(INCLUDE_DOUBLEDOT_FRACTIONS)
+			lim += 1 + (find_char(Cmdline, '.')[1] == '.');
+#  else
+			lim++;
+#  endif
+		}
+#endif
+	}
+
+	if (CmdLineLength >= lim
+		|| (DISPLAY_DIGITS + 5 > CMDLINELEN && CmdLineLength >= CMDLINELEN)) {
+			report_warn(ERR_TOO_LONG);
+			return;
+	}
+	// Leading zeros in the exponent aren't visible to the user,
+	// and they're removed automatically if digits are shifted,
+	// so it's more consistent if they can't be entered, either.
+	if (c == 0 && CmdLineEex) {
+		if (Cmdline[CmdLineLength-1] == 'E')
+			return;
+#ifdef LARGE_EXPONENT_ENTRY
+		if (Cmdline[CmdLineLength-1] == 'D')
+			return;
+#else
+		if (Cmdline[CmdLineLength-1] == '-')
+			return;
+#endif
+	}
+
+	append_cmdline(c + '0');
+
+	if (CmdLineEex)
+		exponent_adjusted(1);
+}
+
+#else // old code
+
+static void digit(unsigned int c) {
+	const int intm = is_intmode();
+	int lim = DISPLAY_DIGITS;
+
 	if (Cmdline[0] == '-')
 		lim++;
 	if (intm) {
@@ -3622,6 +3753,7 @@ static void digit(unsigned int c) {
 	}
 }
 
+#endif
 
 void set_entry() {
 	if (!Running && !XromRunning)
@@ -3732,6 +3864,12 @@ static void specials(const opcode op) {
 	case OP_CLX:
 		if (Running)
 			illegal(op);
+#ifdef LONG_INTMODE_ENTRY
+		else if (CmdLineLength && is_intmode()) {
+			CmdLineInt /= int_base();
+			CmdLineLength--;
+		}
+#endif
 		else if (CmdLineLength) {
 #ifdef LARGE_EXPONENT_ENTRY
 			if (CmdLineEex != 0 && Cmdline[CmdLineLength-1] == 'D') {

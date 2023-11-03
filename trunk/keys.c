@@ -454,8 +454,12 @@ void soft_init_state(void) {
 		CmdLineLength = 0;
 		CmdLineEex = 0;
 		CmdLineDot = 0;
+#ifdef LONG_INTMODE_ENTRY
+		CmdLineInt = 0;
+#endif
 		return;
 	}
+
 	soft = State2.multi || State2.rarg || State2.hyp || State2.gtodot || State2.labellist ||
 			State2.cmplx || State2.arrow || State2.test != TST_NONE || State2.status;
 	runmode = State2.runmode;

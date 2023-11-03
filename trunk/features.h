@@ -24,6 +24,10 @@
  *  Select optional features here
  */
 
+// Allow integer entries of any length (64 bits only are kept)
+
+#define LONG_INTMODE_ENTRY
+
 // Allow for any generic argument taking commands in XROM
 // #define XROM_RARG_COMMANDS
 

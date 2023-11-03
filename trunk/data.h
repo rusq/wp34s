@@ -323,8 +323,14 @@ typedef struct _while_on {
 		unsigned char cmdbase;		// Base value for a command with an argument
 						// fits nicely into his place (alignment)
 	} _command_line;
+#ifdef LONG_INTMODE_ENTRY
+	union {
+		char _cmdline[CMDLINELEN + 1];
+		long long int _cmdlineint;
+	};
+#else
 	char _cmdline[CMDLINELEN + 1];
-
+#endif	
 } TStateWhileOn;
 
 extern TStateWhileOn StateWhileOn;
@@ -342,6 +348,11 @@ extern TStateWhileOn StateWhileOn;
 #define CmdLineDot	 (StateWhileOn._command_line.cmdlinedot)
 #define CmdBase		 (StateWhileOn._command_line.cmdbase)
 #define Cmdline		 (StateWhileOn._cmdline)
+#ifdef LONG_INTMODE_ENTRY
+#define CmdLineIntFlag	 (StateWhileOn._command_line.cmdlineeex)
+#define CmdLineIntSign	 (StateWhileOn._command_line.cmdlinedot)
+#define CmdLineInt   (StateWhileOn._cmdlineint)
+#endif
 
 /*
  *  A private set of flags for non recursive, non interruptible XROM code
