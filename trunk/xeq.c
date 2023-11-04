@@ -981,7 +981,7 @@ static int fract_convert_number(decNumber *x, const char *s) {
 int is_bad_cmdline(void)
 {
 #ifdef LONG_INTMODE_ENTRY
-	if (is_intmode())
+	if (is_intmode()) // it's never bad in intmodes!
 		return 0;
 #endif
 #ifndef IGNORE_INVALID_FRACTIONS
@@ -1014,7 +1014,7 @@ void process_cmdline_int(void) {
 	if (CmdLineLength) {
 		lift_if_enabled();
 		set_lift();
-		setX_int_sgn(CmdLineInt, (int) CmdLineDot); //cast to int
+		setX_int_sgn(CmdLineInt, (int) CmdLineIntSign); // load int and sign into X-register
 		CmdLineLength = 0;
 		WasDataEntry = 0;
 		set_entry();
@@ -1031,7 +1031,7 @@ void process_cmdline(void) {
 
 #ifdef LONG_INTMODE_ENTRY
 	if (is_intmode()) {
-		process_cmdline_int();
+		process_cmdline_int(); // see above!
 		return;
 	}
 #endif
@@ -1079,7 +1079,7 @@ void process_cmdline(void) {
 		CmdLineDot = 0;
 		CmdLineEex = 0;
 #ifdef LONG_INTMODE_ENTRY
-		CmdLineInt = 0; // needed so that an intmode calculation starts off clean
+		CmdLineInt = 0; // needed so that an intmode calculation following floating-point starts off clean
 		if (cmdlinedot == 2) {
 #else
 		if (is_intmode()) {
@@ -2998,7 +2998,7 @@ do_not_check_limits:
 static void cmdlinechs(void) {
 #ifdef LONG_INTMODE_ENTRY
 	if (is_intmode()) {
-		CmdLineIntSign ^= 1; // used as sign flag during intmode entry
+		CmdLineIntSign ^= 1; // flip intmode sign flag
 		return;
 	}
 #endif
@@ -3586,8 +3586,9 @@ static int is_xdigit(const char c) {
 #endif
 
 #ifdef LONG_INTMODE_ENTRY
-
-static void digit(unsigned int c) {
+// version of digit() with new code
+// clearer than having one function with lots of #ifdefs
+static void digit(unsigned int c) { 
 	const int intm = is_intmode();
 	int lim = DISPLAY_DIGITS;
 
@@ -3602,7 +3603,7 @@ static void digit(unsigned int c) {
 
 		CmdLineInt *= int_base();
 		CmdLineInt += c;
-		CmdLineLength++;
+		CmdLineLength++; // using CmdLineLength to record digits entered
 		return;
 	}
 
@@ -3865,7 +3866,7 @@ static void specials(const opcode op) {
 		if (Running)
 			illegal(op);
 #ifdef LONG_INTMODE_ENTRY
-		else if (CmdLineLength && is_intmode()) {
+		else if (CmdLineLength && is_intmode()) { // delete digit
 			CmdLineInt /= int_base();
 			CmdLineLength--;
 		}

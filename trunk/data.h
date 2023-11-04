@@ -326,7 +326,7 @@ typedef struct _while_on {
 #ifdef LONG_INTMODE_ENTRY
 	union {
 		char _cmdline[CMDLINELEN + 1];
-		long long int _cmdlineint;
+		unsigned long long int _cmdlineint; // share memory with _cmdline - no extra RAM needed!
 	};
 #else
 	char _cmdline[CMDLINELEN + 1];
@@ -349,8 +349,8 @@ extern TStateWhileOn StateWhileOn;
 #define CmdBase		 (StateWhileOn._command_line.cmdbase)
 #define Cmdline		 (StateWhileOn._cmdline)
 #ifdef LONG_INTMODE_ENTRY
-#define CmdLineIntFlag	 (StateWhileOn._command_line.cmdlineeex)
-#define CmdLineIntSign	 (StateWhileOn._command_line.cmdlinedot)
+#define CmdLineIntFlag	 (StateWhileOn._command_line.cmdlineeex) // used in display.c
+#define CmdLineIntSign	 (StateWhileOn._command_line.cmdlinedot) // holds sign of CmdLineInt
 #define CmdLineInt   (StateWhileOn._cmdlineint)
 #endif
 

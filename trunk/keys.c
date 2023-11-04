@@ -455,7 +455,7 @@ void soft_init_state(void) {
 		CmdLineEex = 0;
 		CmdLineDot = 0;
 #ifdef LONG_INTMODE_ENTRY
-		CmdLineInt = 0;
+		CmdLineInt = 0; // needed as cmdline won't be zeroed
 #endif
 		return;
 	}

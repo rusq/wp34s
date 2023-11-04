@@ -895,7 +895,7 @@ static void disp_x(const char *p) {
 
 #ifdef LONG_INTMODE_ENTRY
 	if (is_intmode()) {
-		CmdLineIntFlag = 1; // flag to set_int_x that it's been called from here
+		CmdLineIntFlag = 1; // flag to tell set_int_x to align number left
 		set_int_x(CmdLineInt, CNULL);
 		CmdLineIntFlag = 0;
 		if (CmdLineIntSign)
@@ -1163,7 +1163,7 @@ static void set_int_x(const long long int value, char *res) {
 				break;
 
 #ifdef LONG_INTMODE_ENTRY		
-		if ( CmdLineIntFlag && (IntMaxWindow == 0)) // only one window
+		if ( CmdLineIntFlag && (IntMaxWindow == 0)) // Align left if called from disp_x and <12 digits
 			dig = (i-1)*SEGS_PER_DIGIT;
 #endif
 		for (i=0; --k >= 0; i++) {
@@ -1181,7 +1181,7 @@ static void set_int_x(const long long int value, char *res) {
 			else	SET_MANT_SIGN;
 		}
 #ifdef LONG_INTMODE_ENTRY
-		if (WasDataEntry && (IntMaxWindow > 0))
+		if (WasDataEntry && (IntMaxWindow > 0)) // display window bars
 			annunciators();
 #endif
 	}
@@ -1975,8 +1975,8 @@ void format_display(char *buf) {
 			format_reg(regX_idx, buf);
 		} else {
 #ifdef LONG_INTMODE_ENTRY
-			if (is_intmode()) { // ND's guess at what should go here
-				set_int_x(CmdLineInt, buf);
+			if (is_intmode()) { // ND's guess at what should go here - works with the Qt build in Linux
+				set_int_x(build_value(CmdLineInt, CmdLineIntSign), buf);
 			}
 			else {
 #endif
@@ -1987,10 +1987,10 @@ void format_display(char *buf) {
 				buf[CmdLineEex] = 'E';
 				buf[CmdLineEex+1] = '-';
 			}
+#  endif
 #ifdef LONG_INTMODE_ENTRY
 			}
 #endif
-#  endif
 		}
 	}
 	else {

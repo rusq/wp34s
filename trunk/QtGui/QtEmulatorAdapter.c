@@ -174,7 +174,7 @@ void forward_key_released()
 	put_key_adapter(K_RELEASE);
 }
 
-void shutdown()
+void shutdown_calc()
 {
 	shutdown_adapter();
 }

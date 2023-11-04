@@ -1,0 +1,19 @@
+From r3918 onwards the WP34S no longer limits entries in integer mode to 12 digits. So if you wish to enter the base 7 number 100200300400500600100 then you can do so directly. Once 12 digits have been entered the display scrolls to the left, and the "window bars" appear in the status line. During entry the <- key deletes digits and the +/- key changes the sign, as expected.
+
+There is no upper limit to the number of keys that can be entered! However, the maximum word size is still 64 bits. Once the number entered exceeds this limit, earlier digits are lost. In bases other than 2, 4, 8, and 16, the number displayed suddenly changes when 64 bits are exceeded.
+
+Behind the scenes, instead of storing a long string of keypresses, the code calculates and updates the number entered as each key is pressed:
+
+	new number = (old number * base) + key pressed.
+
+When the backspace key is pressed, this is reversed:
+
+	new number = old number / base
+
+(this is integer division). Rather than the 64 bytes needed to store the full command line for a 64-bit binary number, this method only requires 64 bits! By letting these 8 bytes share memory space with the command line, no extra RAM is used. Since the actual hardware only has one or two spare bytes of non-volatile RAM this space-saving is vital. (The actual code takes up a few hundred extra bytes of flash memory.)
+
+I've tested this code on the calculator, the Windows emulator, and (on Linux) on the Qt emulator. It seems to work as intended, but testing by other users would be much appreciated.
+
+If you don't want your calculaor to have this feature, either use r3916 or build the project with the line #define LONG_INTMODE_ENTRY (near the start of features.h) commented out.
+
+Nigel (UK)
