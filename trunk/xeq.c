@@ -3593,16 +3593,26 @@ static void digit(unsigned int c) {
 	int lim = DISPLAY_DIGITS;
 
 	if (intm) { // intmode stuff
+		unsigned long long int N;
+
 		if (c >= int_base()) {
 			report_warn(ERR_DIGIT);
 			return;
 		}
-		lim = 64; // allow people to type lots of digits if they want to.
-		// Actually, lim isn't used. This fits with how the calculator
-		// presently deals with numbers when wordsize is low.
 
-		CmdLineInt *= int_base();
-		CmdLineInt += c;
+		N = CmdLineInt * int_base();
+		if (N / int_base() != CmdLineInt) { // overflow in multiplication
+			report_warn(ERR_TOO_LONG);
+			return;
+		}
+
+		N += c;
+		if (N < c) { // overflow in addition
+			report_warn(ERR_TOO_LONG);
+			return;
+		}
+
+		CmdLineInt = N;
 		CmdLineLength++; // using CmdLineLength to record digits entered
 		return;
 	}
