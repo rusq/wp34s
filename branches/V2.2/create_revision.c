@@ -44,16 +44,17 @@ static char *Template =
 
 int main( int argc, char **argv )
 {
-	char buffer[ 100 ];
-	char tmpname[ FILENAME_MAX ];
+	char buffer[ 1000 ]; // ND change to prevent compiler warning
+//	char tmpname[ FILENAME_MAX ]; // tmpnam returns an inaccessible filename in Windows 10
+	char tmpname[] = "wptmpxxx.tmp";
 	FILE *f;
 	int rev;
 	char *p;
 	
-	if (tmpnam( tmpname ) == NULL) {
-		perror("Unable to create tempory file name");
-		return 1;
-	}
+//	if (tmpnam( tmpname ) == NULL) {
+//		perror("Unable to create temporary file name");
+//		return 1;
+//	}
 
 	// Try to execute svnversion
 	sprintf( buffer, "svnversion -n >%s", tmpname );

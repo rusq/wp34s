@@ -276,8 +276,10 @@ $(UTILITIES)/post_process$(EXE): post_process.c Makefile features.h xeq.h
 	$(HOSTCC) $(HOSTCFLAGS) -o $@ $<
 
 xrom.c: xrom.wp34s $(OPCODES) Makefile xeq.h
-	tools/wp34s_asm.pl -pp -op $(OPCODES) -c -o xrom.c xrom.wp34s
-
+	./tools/wp34s_asm.exe -pp -op $(OPCODES) -c -o xrom.c xrom.wp34s
+# wp34s_asm.pl doesn't work for me (ND) even though typing tools\wp34s_asm.pl works fine from
+# the DOS command line. I get a FILE NOT FOUND message, although which file isn't found isn't clear. 
+# The .exe file is part of the distribution and seems to work fine, so that's ok.
 xeq.h:
 	@touch xeq.h
 

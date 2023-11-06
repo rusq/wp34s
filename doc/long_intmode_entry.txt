@@ -1,6 +1,6 @@
 From r3918 onwards the WP34S no longer limits entries in integer mode to 12 digits. So if you wish to enter the base 7 number 100200300400500600100 then you can do so directly. Once 12 digits have been entered the display scrolls to the left, and the "window bars" appear in the status line. During entry the <- key deletes digits and the +/- key changes the sign, as expected.
 
-There is no upper limit to the number of keys that can be entered! However, the maximum word size is still 64 bits. Once the number entered exceeds this limit, earlier digits are lost. In bases other than 2, 4, 8, and 16, the number displayed suddenly changes when 64 bits are exceeded.
+The error message "Too Long Error" is flashed when a key is pressed that makes the number entered too long to fit into the current wordsize.
 
 Behind the scenes, instead of storing a long string of keypresses, the code calculates and updates the number entered as each key is pressed:
 

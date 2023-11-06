@@ -3599,19 +3599,22 @@ static void digit(unsigned int c) {
 			report_warn(ERR_DIGIT);
 			return;
 		}
-
+		CmdLineIntFlag = 0;
 		N = CmdLineInt * int_base();
-		if (N / int_base() != CmdLineInt) { // overflow in multiplication
+		if (word_size() == 64) { // overflow checks
+			if (N / int_base() != CmdLineInt) CmdLineIntFlag = 1;
+			N += c;
+			if (N < c) CmdLineIntFlag = 1; 
+		}
+		else {
+			if (N >> word_size()) CmdLineIntFlag = 1;
+			N += c;
+			if (N >> word_size()) CmdLineIntFlag = 1;
+		}
+		if (CmdLineIntFlag) {
 			report_warn(ERR_TOO_LONG);
 			return;
 		}
-
-		N += c;
-		if (N < c) { // overflow in addition
-			report_warn(ERR_TOO_LONG);
-			return;
-		}
-
 		CmdLineInt = N;
 		CmdLineLength++; // using CmdLineLength to record digits entered
 		return;

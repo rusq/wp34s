@@ -287,11 +287,11 @@ struct argcmd
 {
 	unsigned short f;
 	unsigned char lim;
-	unsigned int indirectokay : 1;
-	unsigned int stckreg : 1;
-	unsigned int cmplx : 1;
-	unsigned int label : 1;
-	unsigned int stos : 1;
+	unsigned char indirectokay : 1;
+	unsigned char stckreg : 1;
+	unsigned char cmplx : 1;
+	unsigned char label : 1;
+	unsigned char stos : 1;
 	_CONST char cmd[NAME_LEN];
 };
 
@@ -314,12 +314,12 @@ struct argcmd
 #else
 	void (*f)(unsigned int, enum rarg);
 #endif
-	unsigned int lim : 8;
-	unsigned int indirectokay : 1;
-	unsigned int stckreg : 1;
-	unsigned int cmplx : 1;
-	unsigned int label : 1;
-	unsigned int stos : 1;
+	unsigned char lim : 8;
+	unsigned char indirectokay : 1;
+	unsigned char stckreg : 1;
+	unsigned char cmplx : 1;
+	unsigned char label : 1;
+	unsigned char stos : 1;
 	const char cmd[NAME_LEN];
 };
 extern const struct argcmd argcmds[];
@@ -877,8 +877,10 @@ enum errors {
 	ERR_READ_ONLY,	ERR_SOLVE,
 #ifdef MATRIX_SUPPORT
 	ERR_MATRIX_DIM,	ERR_SINGULAR,
+	#define MAX_ERROR 23
+#else
+	#define MAX_ERROR 21
 #endif
-	MAX_ERROR
 };
 
 
