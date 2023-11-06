@@ -442,9 +442,9 @@
 001093cc t set_x
 001093f8 t annunciators
 001097cc t set_int_x
-00109b6c t format_reg
-00109bd8 t alpha_reg
-00109bfe t display
+00109b78 t format_reg
+00109be4 t alpha_reg
+00109c0a t display
 0010a6d8 t cmdpause
 0010a6fc t cmdview
 0010a758 t version
@@ -815,8 +815,8 @@
 0011ade5 t small_minus.8104
 0011ade9 t small_dots.8105
 0011adff t shift_chars.7921
-0011ae04 t CSWTCH.926
-0011ae10 t CSWTCH.929
+0011ae04 t CSWTCH.927
+0011ae10 t CSWTCH.930
 0011ae18 t S7_STEP
 0011ae2c t S_SURE
 0011ae32 t libname
@@ -1043,8 +1043,8 @@
 00200168 00000004 b Busy
 0011c324 00000080 T COMBEXP
 0011c2a4 00000080 T COMBMSD
-0011ae04 0000000c t CSWTCH.926
-0011ae10 00000008 t CSWTCH.929
+0011ae04 0000000c t CSWTCH.927
+0011ae10 00000008 t CSWTCH.930
 00200118 00000004 b ClockSpeed
 00200174 00000004 b Contrast
 0020002c 00000018 b Ctx
@@ -1204,7 +1204,7 @@
 00100308 0000001c t alpha_onoff
 00108494 00000012 t alpha_rcl
 00108444 00000050 t alpha_rcl_s
-00109bd8 00000026 t alpha_reg
+00109be4 00000026 t alpha_reg
 00108bc4 00000048 t alpha_rot_r
 0010150a 0000003e t alpha_shift_l
 00108c0c 00000038 t alpha_shift_r
@@ -1593,7 +1593,7 @@
 0011870b 0000007a t digtbl
 0011b0e0 00000004 t disp.9212
 00111c78 0000005c t dispatch_xrom
-00109bfe 00000ada t display
+00109c0a 00000ace t display
 0010e860 00000424 t divmod
 001183db 00000003 t divs.5350
 00101f20 00000014 t dn_1
@@ -1671,7 +1671,7 @@
 00110342 0000004e t flash_backup
 00110f64 00000048 t flash_restore
 00103438 00000028 t flush_comm
-00109b6c 0000006c t format_reg
+00109b78 0000006c t format_reg
 00200154 00000004 b gLowLevelInitSupcStatus
 0011ad80 00000054 t gamma_consts
 00105e8a 00000022 t gcheckSmall
@@ -1967,7 +1967,7 @@
 00100de0 00000030 t set_exp_digits_string
 00101fbc 00000014 t set_inf
 0010cc28 00000040 t set_int_base
-001097cc 000003a0 t set_int_x
+001097cc 000003ac t set_int_x
 0010018c 00000044 t set_mckr
 001048d4 0000001a t set_overflow
 001019e4 00000084 t set_pc

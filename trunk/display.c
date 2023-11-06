@@ -898,8 +898,6 @@ static void disp_x(const char *p) {
 		CmdLineIntFlag = 1; // flag to tell set_int_x to align number left
 		set_int_x(CmdLineInt, CNULL);
 		CmdLineIntFlag = 0;
-		if (CmdLineIntSign)
-			SET_MANT_SIGN;
 		return;
 	}
 #endif
@@ -1125,6 +1123,9 @@ static void set_int_x(const long long int value, char *res) {
 			}
 		}
 	}
+
+	/* If data entry in progress get sign from CmdLineIntSign */
+	if (CmdLineIntFlag) sign = CmdLineIntSign;
 
 	/* At this point i is the number of digits in the output */
 	if (res) {
@@ -1976,7 +1977,10 @@ void format_display(char *buf) {
 		} else {
 #ifdef LONG_INTMODE_ENTRY
 			if (is_intmode()) { // ND's guess at what should go here - works with the Qt build in Linux
-				set_int_x(build_value(CmdLineInt, CmdLineIntSign), buf);
+			  CmdLineIntFlag = 1; // flag tells set_int_x to use CmdLineIntSign as the sign
+			  // so if -12h is being entered -12 gets copied, not EE
+			  set_int_x(CmdLineInt, buf);
+			  CmdLineIntFlag = 0;
 			}
 			else {
 #endif
