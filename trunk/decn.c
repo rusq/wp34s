@@ -23,6 +23,9 @@
 #include "serial.h"
 #include "lcd.h"
 
+#include <stdlib.h>
+#include <math.h>
+
 // #define DUMP1
 #ifdef DUMP1
 #include <stdio.h>
@@ -2041,7 +2044,127 @@ decNumber *decNumberRoundDecimals(decNumber *r, const decNumber *x, const int n,
 	return r;
 #endif
 }
+#ifdef NEW_FRACTION_CONVERSION
+// new fraction code from C47 project -
+// longer but more precise
+void decNumber2Fraction(decNumber *n, decNumber *d, const decNumber *x) {
+  decNumber y, z, t, maxd; 
+  enum denom_modes dm;
 
+  if (decNumberIsNaN(x)) {
+    cmplx_NaN(n, d);
+    return;
+  }
+  if (decNumberIsInfinite(x)) {
+    decNumberZero(d);
+    if (decNumberIsNegative(x))
+      dn__1(n);
+    else
+      dn_1(n);
+    return;
+  }
+
+  dm = UState.denom_mode;
+  get_maxdenom(&maxd);
+  
+  // x is the decNumber to be approximated
+
+  decNumberFloor (&z, x); // z is integer below x;
+  dn_subtract (&y, x, &z); // y is now between 0 and 1
+  // so if x is 2.3, z is 2, and y is 0.3;
+  // so if x is -2.3, z is -3 and y is 0.7.
+
+  if (dm == DENOM_ANY) {
+    unsigned int a=0, b=1, c=1, D=1, oldA=0, oldB=0, oldC=0, oldD=0;
+    // D as d is already taken
+    unsigned int denMax = dn_to_int(&maxd);
+    unsigned int exactValue = 0;
+    unsigned int num, den;
+    
+    decNumber mediant, temp1, delta;
+
+    while(b <= denMax && D <= denMax) {
+      oldA = a;
+      oldB = b;
+      oldC = c;
+      oldD = D;
+      // mediant = (a+c) / (b+d)
+      int_to_dn(&mediant, a+c); 
+      int_to_dn(&temp1, b+D);
+      dn_divide(&mediant, &mediant, &temp1);
+
+      dn_subtract(&delta, &mediant, &y);
+
+      if(decNumberIsZero(&delta)) {
+	exactValue = 1;
+	if(b + D <= denMax) {
+	  num = a + c;
+	  den = b + D;
+	}
+	else if(D > b) {
+	  num = c;
+	  den = D;
+	}
+	else {
+	  num = a;
+	  den = b;
+	}
+	break;
+      }
+      else if(decNumberIsNegative(&delta)) {
+	a += c;
+	b += D;
+      }
+      else {
+	c += a;
+	D += b;
+      }
+    }	  
+    if(!exactValue) {
+      // mediant = |fracPart - oldC/oldD|
+      int_to_dn(&mediant, oldC);
+      int_to_dn(&temp1, oldD);
+      dn_divide(&mediant, &mediant, &temp1);
+      dn_subtract(&mediant, &y, &mediant);
+      dn_abs(&mediant, &mediant);
+
+      // delta = |fracPart - oldA/oldB|
+      int_to_dn(&delta, oldA);
+      int_to_dn(&temp1, oldB);
+      dn_divide(&delta, &delta, &temp1);
+      dn_subtract(&delta, &y, &delta);
+      dn_abs(&delta, &delta);
+
+      if(dn_lt(&mediant, &delta)) {
+	num = oldC;
+	den = oldD;
+      }
+      else {
+	num = oldA;
+	den = oldB;
+      }
+    }
+    int_to_dn(n, num);
+    int_to_dn(d, den);
+    // add back integral part of number, currently in z:
+    dn_add(n, n, dn_multiply(&z, &z, d));
+  }
+  else {
+    decNumberCopy(d, &maxd);
+    dn_multiply(&t, x, d);
+    decNumberRound(n, &t);
+    if (dm == DENOM_FACTOR) {
+      if (dn_eq0(n))
+	dn_1(d);
+      else {
+	dn_gcd(&t, n, d, 0);
+	dn_divide(n, n, &t);
+	dn_divide(d, d, &t);
+      }
+    }
+  }
+}
+#else // old WP34S fraction conversion code - shorter but less accurate
 void decNumber2Fraction(decNumber *n, decNumber *d, const decNumber *x) {
 	decNumber z, dold, t, s, maxd;
 	int neg;
@@ -2101,6 +2224,7 @@ void decNumber2Fraction(decNumber *n, decNumber *d, const decNumber *x) {
 		}
 	}
 }
+#endif
 
 static decNumber *gser(decNumber *res, const decNumber *a, const decNumber *x, const decNumber *gln) {
 	decNumber ap, del, sum, t, u;

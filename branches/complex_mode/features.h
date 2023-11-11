@@ -24,6 +24,12 @@
  *  Select optional features here
  */
 
+// Use improved fraction conversion code from C47 project
+#define NEW_FRACTION_CONVERSION
+
+// Allow integer entries of any length (64 bits only are kept)
+#define LONG_INTMODE_ENTRY
+
 // Allow for any generic argument taking commands in XROM
 // #define XROM_RARG_COMMANDS
 
@@ -197,7 +203,7 @@
 // be parsed. If a.b.0 is entered, it's interpreted as the integer a, and
 // with INCLUDE_DOUBLEDOT_FRACTIONS enabled, a..0 is interpreted as zero.
 // This saves approximately 252 bytes in the firmware.
-//#define IGNORE_INVALID_FRACTIONS
+#define IGNORE_INVALID_FRACTIONS
 
 // Show four-digit exponents instead of the HIG symbol in double precision mode
 // and display only 10 digits of the mantissa if necessary.

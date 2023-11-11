@@ -1190,7 +1190,7 @@ extern unsigned int findmultilbl(const opcode, int);
 extern void fin_tst(const int);
 
 extern const char *prt(opcode, char *);
-extern const char *catcmd(opcode, char *);
+extern const char *catcmd(opcode, char [16]);
 
 extern int stack_size(void);
 extern REGISTER *get_stack(int pos);

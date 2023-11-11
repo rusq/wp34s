@@ -35,6 +35,9 @@ static void set_status_sized(const char *, int);
 static void set_status(const char *);
 static void set_status_right(const char *);
 static void set_status_graphic(const unsigned char *);
+#ifdef LONG_INTMODE_ENTRY
+static void set_int_x(const long long int value, char *res);
+#endif
 
 const char *DispMsg;	   // What to display in message area
 short int DispPlot;
@@ -942,38 +945,29 @@ static void disp_x(const char *p) {
 	int overflow_to_left = 0;
 #endif
 
+#ifdef LONG_INTMODE_ENTRY
+	if (is_intmode()) {
+		CmdLineIntFlag = 1; // flag to tell set_int_x to align number left
+		set_int_x(CmdLineInt, CNULL);
+		CmdLineIntFlag = 0;
+		return;
+	}
+#endif
+
 	if (*p == '-') {
 		SET_MANT_SIGN;
 		p++;
 	}
 
+#ifndef LONG_INTMODE_ENTRY
 	if (is_intmode()) {
-		int len = 0;
-		const char* q = p;
-		for (i = 0; *q != '\0'; q++) {
-			len++;
-		} // len counts digits.
-/*
-Idea: if len < 13, no problem.
-If len = 13 to 15, use exponent.
-if len = 16, use exponent but display from digit 2 onwards.
-Note: exponent used by hex label, carry, and overflow. 
-*/
-		if (len == 16) {
-			len = 15;
-			p++;
-		}
-		for (i=0; *p != '\0' && i < 12*SEGS_PER_DIGIT; p++) { // display digits 1 up to 12 in display.
+		for (i=0; *p != '\0'; p++) {
 			set_dig(i, *p);
 			i += SEGS_PER_DIGIT;
 		}
-		for (i=SEGS_EXP_BASE; *p != '\0' && i < SEGS_EXP_BASE+3*SEGS_PER_EXP_DIGIT; p++) {
-			set_dig(i, *p);
-			i += SEGS_PER_EXP_DIGIT;
-		}
-
-		if (len < 13) carry_overflow(); // don't display base, carry or overflow if exponent being used
+		carry_overflow();
 	} else {
+#endif
 		set_separator_decimal_modes();
 
 		i = 0;
@@ -1103,7 +1097,9 @@ Note: exponent used by hex label, carry, and overflow.
 #  endif
 		} 
 #endif
+#ifndef LONG_INTMODE_ENTRY
 	}
+#endif
 }
 
 const char DIGITS[] = "0123456789ABCDEF";
@@ -1131,7 +1127,7 @@ static void set_int_x(const long long int value, char *res) {
 		carry_overflow();
 	}
 
-	if ((0x7f75 & (1 << (b-1))) != 0) {
+	if ((0x7f75 & (1 << (b-1))) != 0) { // false if b = 2, 4, 8, 16
 		v = extract_value(value, &sign);
 		if (int_mode() == MODE_2COMP && sign == 1 && v == 0)
 			v = value;
@@ -1180,6 +1176,9 @@ static void set_int_x(const long long int value, char *res) {
 		}
 	}
 
+	/* If data entry in progress get sign from CmdLineIntSign */
+	if (CmdLineIntFlag) sign = CmdLineIntSign;
+
 	/* At this point i is the number of digits in the output */
 	if (res) {
 		if (sign) *res++ = '-';
@@ -1215,6 +1214,11 @@ static void set_int_x(const long long int value, char *res) {
 		for (k = 0; k < 12; k++)
 			if (buf[j + k] == '\0')
 				break;
+
+#ifdef LONG_INTMODE_ENTRY		
+		if ( CmdLineIntFlag && (IntMaxWindow == 0)) // Align left if called from disp_x and <12 digits
+			dig = (i-1)*SEGS_PER_DIGIT;
+#endif
 		for (i=0; --k >= 0; i++) {
 			int ch = buf[j++];
 			if (i >= shift)
@@ -1229,6 +1233,10 @@ static void set_int_x(const long long int value, char *res) {
 				set_dig(dig, '-');
 			else	SET_MANT_SIGN;
 		}
+#ifdef LONG_INTMODE_ENTRY
+		if (WasDataEntry && (IntMaxWindow > 0)) // display window bars
+			annunciators();
+#endif
 	}
 }
 
@@ -2019,6 +2027,15 @@ void format_display(char *buf) {
 		if (p == NULL) {
 			format_reg(regX_idx, buf);
 		} else {
+#ifdef LONG_INTMODE_ENTRY
+			if (is_intmode()) { // ND's guess at what should go here - works with the Qt build in Linux
+			  CmdLineIntFlag = 1; // flag tells set_int_x to use CmdLineIntSign as the sign
+			  // so if -12h is being entered -12 gets copied, not EE
+			  set_int_x(CmdLineInt, buf);
+			  CmdLineIntFlag = 0;
+			}
+			else {
+#endif
 			scopy(buf, p);
 #  ifdef LARGE_EXPONENT_ENTRY
 			if (CmdLineEex != 0 && Cmdline[CmdLineEex] == 'D') {
@@ -2027,6 +2044,9 @@ void format_display(char *buf) {
 				buf[CmdLineEex+1] = '-';
 			}
 #  endif
+#ifdef LONG_INTMODE_ENTRY
+			}
+#endif
 		}
 	}
 	else {
