@@ -24,7 +24,7 @@
  *  Select optional features here
  */
 
-// Use improved fraction conversion code from C47 project
+// Enable the new decimal->fraction conversion algorithm
 #define NEW_FRACTION_CONVERSION
 
 // Allow integer entries of any length (64 bits only are kept)

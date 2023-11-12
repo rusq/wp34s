@@ -23,9 +23,6 @@
 #include "serial.h"
 #include "lcd.h"
 
-#include <stdlib.h>
-#include <math.h>
-
 // #define DUMP1
 #ifdef DUMP1
 #include <stdio.h>
@@ -2045,12 +2042,18 @@ decNumber *decNumberRoundDecimals(decNumber *r, const decNumber *x, const int n,
 #endif
 }
 #ifdef NEW_FRACTION_CONVERSION
-// new fraction code from C47 project -
-// longer but more precise
 void decNumber2Fraction(decNumber *n, decNumber *d, const decNumber *x) {
-  decNumber y, z, t, maxd; 
+  decNumber y, t, t1,  maxd;
+  decNumber a0_dn, a_dn;
+  decNumber this_error, last_error;  
   enum denom_modes dm;
 
+  unsigned int m, dmax;
+  unsigned int h, h_1, h_2;
+  unsigned int k, k_1, k_2;
+  int a0;
+  unsigned int a;
+  
   if (decNumberIsNaN(x)) {
     cmplx_NaN(n, d);
     return;
@@ -2066,90 +2069,117 @@ void decNumber2Fraction(decNumber *n, decNumber *d, const decNumber *x) {
 
   dm = UState.denom_mode;
   get_maxdenom(&maxd);
-  
-  // x is the decNumber to be approximated
-
-  decNumberFloor (&z, x); // z is integer below x;
-  dn_subtract (&y, x, &z); // y is now between 0 and 1
-  // so if x is 2.3, z is 2, and y is 0.3;
-  // so if x is -2.3, z is -3 and y is 0.7.
+  dmax = dn_to_int(&maxd);
 
   if (dm == DENOM_ANY) {
-    unsigned int a=0, b=1, c=1, D=1, oldA=0, oldB=0, oldC=0, oldD=0;
-    // D as d is already taken
-    unsigned int denMax = dn_to_int(&maxd);
-    unsigned int exactValue = 0;
-    unsigned int num, den;
-    
-    decNumber mediant, temp1, delta;
+/*
+See https://en.wikipedia.org/wiki/Continued_fraction#Best_rational_approximations
+A "best rational approximation" to a number x is a rational number c/d such that
+x is closer to c/d than to any other rational number with a smaller denominator.
+We want to find the best rational approximation to x with a denominator <= DMAX
+but otherwise as big as possible.
+The Wikipedia page gives an algorithm to follow that should achieve this.
+It runs in far fewer steps than the "mediant" algorithm, which took over 3000 steps
+to conclude that 0.33333333333 = 1/3 (with DMAX = 10000).
+The code below implements this algorithm. It's the standard continued fraction method, 
+with an extra trick at the end involving "semiconvergents".
+*/
+    decNumberCopy(&y, x);
+    a0 = dn_to_int(decNumberFloor(&a0_dn, x));
 
-    while(b <= denMax && D <= denMax) {
-      oldA = a;
-      oldB = b;
-      oldC = c;
-      oldD = D;
-      // mediant = (a+c) / (b+d)
-      int_to_dn(&mediant, a+c); 
-      int_to_dn(&temp1, b+D);
-      dn_divide(&mediant, &mediant, &temp1);
-
-      dn_subtract(&delta, &mediant, &y);
-
-      if(decNumberIsZero(&delta)) {
-	exactValue = 1;
-	if(b + D <= denMax) {
-	  num = a + c;
-	  den = b + D;
-	}
-	else if(D > b) {
-	  num = c;
-	  den = D;
-	}
-	else {
-	  num = a;
-	  den = b;
-	}
-	break;
-      }
-      else if(decNumberIsNegative(&delta)) {
-	a += c;
-	b += D;
-      }
-      else {
-	c += a;
-	D += b;
-      }
-    }	  
-    if(!exactValue) {
-      // mediant = |fracPart - oldC/oldD|
-      int_to_dn(&mediant, oldC);
-      int_to_dn(&temp1, oldD);
-      dn_divide(&mediant, &mediant, &temp1);
-      dn_subtract(&mediant, &y, &mediant);
-      dn_abs(&mediant, &mediant);
-
-      // delta = |fracPart - oldA/oldB|
-      int_to_dn(&delta, oldA);
-      int_to_dn(&temp1, oldB);
-      dn_divide(&delta, &delta, &temp1);
-      dn_subtract(&delta, &y, &delta);
-      dn_abs(&delta, &delta);
-
-      if(dn_lt(&mediant, &delta)) {
-	num = oldC;
-	den = oldD;
-      }
-      else {
-	num = oldA;
-	den = oldB;
-      }
+	// Check if x is too close to an integer to have a fractional part given DMAX.
+	if ( dn_lt( dn_subtract(&t,&y,&a0_dn), dn_divide(&t1, &const_1, dn_multiply(&t1, &const_2, &maxd)))) {
+      decNumberCopy(n, &a0_dn);
+      decNumberCopy(d, &const_1);
+      return;
     }
-    int_to_dn(n, num);
-    int_to_dn(d, den);
-    // add back integral part of number, currently in z:
-    dn_add(n, n, dn_multiply(&z, &z, d));
+
+	dn_divide(&y, &const_1, dn_subtract(&t, &y, &a0_dn));
+    a = dn_to_int(decNumberFloor(&a_dn, &y));
+	// First approximation: x = a0+(1/a)
+
+	if (a > dmax) { // Best approximation is a0 + (1/DMAX)
+      int_to_dn (n, a0*dmax+1);
+      decNumberCopy (d, &maxd);
+      return;
+    }
+	
+    h_1 = a0;
+    k_1 = 1;
+
+    h = a0*a + 1;
+    k = a;
+
+    do {
+      // update h, k variables ready for next loop.
+      h_2 = h_1;
+      k_2 = k_1;
+      h_1 = h;
+      k_1 = k;
+
+      dn_multiply(&t,dn_subtract(&t,&y,&a_dn),&maxd);
+      dn_multiply(&t,&t,&const_2); // t = 2*DMAX*(y-a)
+	  int_to_dn(&t1,k_1); // t1 = k_1
+	  if (dn_lt(&t, &t1)) { // If (2*DMAX*(y-a) < k_1..
+		  // Best approximation already reached -
+		  // If (y-a) is too small, m (calculated below) will
+		  // be less than a/2 - this means (according to Wikipedia)
+		  // that the best convergent has already been reached
+		  int_to_dn (n, h_1); 
+		  int_to_dn (d, k_1);
+		  return;
+	  }
+
+      dn_divide(&y, &const_1, dn_subtract(&t, &y, &a_dn)); // y = 1/(y-a)
+      a = dn_to_int(decNumberFloor(&a_dn, &y)); // a = floor(y)
+
+      // work out new h, k via standard recurrence relation
+      h = h_2 + a*h_1;
+      k = k_2 + a*k_1;
+    } while (k<=dmax); // keep going until k is greater than dmax
+
+	// Now k > DMAX, so we need to either choose the previous convergent, or
+	// calculate a semiconvergent. 
+	// m worked out below gives the semiconvergent with the biggest
+	// denominator less than DMAX, as long as a couple of conditions are 
+	// satisfied.
+    m = (dmax - k_2)/k_1; // integer division intended
+    if (m < a/2) { // this means that the previous convergent is the best
+      int_to_dn (n, h_1);
+      int_to_dn (d, k_1);
+      return;
+    }
+
+    h = h_2+m*h_1;
+    k = k_2+m*k_1;
+
+    if (m == a/2) { // have to see which one is best - previous convergent or new semiconvergent
+      int_to_dn(&t, h_1);
+      int_to_dn(&t1, k_1);
+      dn_divide(&t, &t, &t1);
+      dn_subtract(&t, x, &t);
+      dn_abs(&last_error, &t);
+    
+      int_to_dn(&t, h);
+      int_to_dn(&t1, k);
+      dn_divide(&t, &t, &t1);
+      dn_subtract(&t, x, &t);
+      dn_abs(&this_error, &t);
+	  
+	  if (dn_lt(&last_error, &this_error)) {
+		  int_to_dn(n, h_1);
+		  int_to_dn(d, k_1);
+		  return;
+	  }
+	}
+
+    // new semiconvergent is the winner - go for it!
+  
+    int_to_dn(n, h);
+    int_to_dn(d, k);
   }
-  else {
+  else { // This is the original WP34S code for when DENOM isn't ANY
+	  // either fixed, or factors allowed
     decNumberCopy(d, &maxd);
     dn_multiply(&t, x, d);
     decNumberRound(n, &t);
@@ -2164,7 +2194,7 @@ void decNumber2Fraction(decNumber *n, decNumber *d, const decNumber *x) {
     }
   }
 }
-#else // old WP34S fraction conversion code - shorter but less accurate
+#else
 void decNumber2Fraction(decNumber *n, decNumber *d, const decNumber *x) {
 	decNumber z, dold, t, s, maxd;
 	int neg;
